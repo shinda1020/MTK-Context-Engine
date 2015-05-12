@@ -30,14 +30,15 @@ public class CETest {
 		// TODO Auto-generated method stub
 		ContextEngine ce = new ContextEngine();
 		ce.startIMU();
+		ce.startCam();
 
 		Scanner s = new Scanner(System.in);
 		if (s.nextLine() != null) {
 			System.out.println("New line");
 			ce.stopIMU();
+			ce.stopCamera();
 		}
 
 	}
 
-	
 }

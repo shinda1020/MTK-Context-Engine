@@ -47,7 +47,6 @@ public class IMU extends OnBoardSensor implements IIMUCtxUpdated {
 	@Override
 	protected void handleSensorMsg(String msg) {
 		if (msg.compareToIgnoreCase("shake") == 0) {
-			System.out.println(msg);
 			this.shakeDetected();
 		}
 	}

@@ -12,7 +12,7 @@ package com.ctxengine.sensors;
 public class Camera extends OnBoardSensor implements ICameraCtxUpdated {
 
 	/* The name of the sensor thread */
-	final private String sensorThreadName = "";
+	final private String sensorThreadName = "Cam";
 
 	/* The path where the sensor module executable is stored */
 	final private String sensorModulePath = "sensorbin/test";
@@ -44,8 +44,7 @@ public class Camera extends OnBoardSensor implements ICameraCtxUpdated {
 	 */
 	@Override
 	protected void handleSensorMsg(String msg) {
-		if (msg.compareToIgnoreCase("face") == 0) {
-			System.out.println(msg);
+		if (msg.compareToIgnoreCase("shake") == 0) {
 			this.faceDetected();
 		}
 	}
@@ -77,8 +76,8 @@ public class Camera extends OnBoardSensor implements ICameraCtxUpdated {
 	 ******************************************************************/
 
 	/**
-	 * This function implements the faceDetected function in the ICameraCtxUpdated
-	 * interface by passing the event to the context engine.
+	 * This function implements the faceDetected function in the
+	 * ICameraCtxUpdated interface by passing the event to the context engine.
 	 */
 	@Override
 	public void faceDetected() {

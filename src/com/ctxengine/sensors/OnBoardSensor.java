@@ -114,7 +114,6 @@ public abstract class OnBoardSensor {
 			 * program when failed.
 			 */
 			try {
-				System.out.println(runnablePath);
 				pr = Runtime.getRuntime().exec(runnablePath);
 			} catch (IOException e) {
 				e.printStackTrace();
