@@ -29,53 +29,15 @@ public class CETest {
 			InterruptedException {
 		// TODO Auto-generated method stub
 		ContextEngine ce = new ContextEngine();
-		
-		OnBoardSensor imu = new IMU(ce);
-		imu.startSensor();
-		
+		ce.startIMU();
+
 		Scanner s = new Scanner(System.in);
 		if (s.nextLine() != null) {
 			System.out.println("New line");
-			imu.stopSensor();
+			ce.stopIMU();
 		}
-		
-//		imu.startSensor();
-		
-//		this.shutdown();
-		
-		
-//		while(true){}
-		
-//		pr.waitFor();
-		
-//		Process process = Runtime.getRuntime().exec("sensorbin/test");
-//		LogStreamReader lsr = new LogStreamReader(process.getInputStream());
-//		Thread thread = new Thread(lsr, "LogStreamReader");
-//		thread.start();
-		
+
 	}
 
-
-	public static class LogStreamReader implements Runnable {
-
-	    private BufferedReader reader;
-
-	    public LogStreamReader(InputStream is) {
-	        this.reader = new BufferedReader(new InputStreamReader(is));
-	    }
-
-	    public void run() {
-	        try {
-	            String line = reader.readLine();
-	            while (line != null) {
-	                System.out.println(line);
-	                line = reader.readLine();
-	            }
-	            reader.close();
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }
-	    }
-	}
-
+	
 }

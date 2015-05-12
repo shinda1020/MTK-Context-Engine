@@ -24,13 +24,6 @@ public abstract class OnBoardSensor {
 	/* The private sensor thread instance */
 	protected SensorThread sensorThread;
 
-	/*
-	 * The context engine instance that instantiate this sensor This attribute
-	 * is used to trigger behaviors of the context engine when context is
-	 * updated.
-	 */
-	protected ContextEngine ctxEngine;
-
 	/**
 	 * This abstract function defines the behaviors after certain sensor
 	 * messages are received.
@@ -53,18 +46,6 @@ public abstract class OnBoardSensor {
 	 * @return The name of the sensor thread.
 	 */
 	protected abstract String getSensorThreadName();
-
-	/**
-	 * This constructor takes in the instance of the context engine that
-	 * instantiates this sensor module.
-	 * 
-	 * @param ce
-	 *            The context engine that instantiates this sensor module.
-	 */
-	public OnBoardSensor(ContextEngine ce) {
-		super();
-		this.ctxEngine = ce;
-	}
 
 	/**
 	 * This function starts the sensor module from predefined module path.
@@ -152,10 +133,11 @@ public abstract class OnBoardSensor {
 			 * the handleSensorOutput(String) function in the OnBoardSensor
 			 * class to handle.
 			 */
-			String line = null;
+			String line;
 			try {
-				while ((line = br.readLine()) != null && !isInterrupted)
+				while ((line = br.readLine()) != null && !isInterrupted) {
 					handleSensorMsg(line);
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 				System.exit(1);
