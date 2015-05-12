@@ -1,18 +1,7 @@
 package com;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Scanner;
-
 import com.ctxengine.ContextEngine;
-import com.ctxengine.sensors.IMU;
-import com.ctxengine.sensors.OnBoardSensor;
-
-/**
- * 
- */
 
 /**
  * @author shinda
@@ -22,11 +11,8 @@ public class CETest {
 
 	/**
 	 * @param args
-	 * @throws IOException
-	 * @throws InterruptedException
 	 */
-	public static void main(String[] args) throws IOException,
-			InterruptedException {
+	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		ContextEngine ce = new ContextEngine();
 		ce.startIMU();
