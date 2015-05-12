@@ -148,6 +148,7 @@ public abstract class OnBoardSensor {
 		 */
 		public void start() {
 			if (t == null) {
+				this.isInterrupted = false;
 				t = new Thread(this, threadName);
 				t.setDaemon(false);
 				t.start();
