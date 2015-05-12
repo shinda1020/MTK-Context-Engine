@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import com.ctxengine.ContextEngine;
+
 /**
  * This class is an abstract class of all on board sensor services.
  * <p>
@@ -20,7 +22,14 @@ import java.io.InputStreamReader;
 public abstract class OnBoardSensor {
 
 	/* The private sensor thread instance */
-	private SensorThread sensorThread;
+	protected SensorThread sensorThread;
+
+	/*
+	 * The context engine instance that instantiate this sensor This attribute
+	 * is used to trigger behaviors of the context engine when context is
+	 * updated.
+	 */
+	protected ContextEngine ctxEngine;
 
 	/**
 	 * This abstract function defines the behaviors after certain sensor
@@ -46,10 +55,15 @@ public abstract class OnBoardSensor {
 	protected abstract String getSensorThreadName();
 
 	/**
-	 * The naive constructor.
+	 * This constructor takes in the instance of the context engine that
+	 * instantiates this sensor module.
+	 * 
+	 * @param ce
+	 *            The context engine that instantiates this sensor module.
 	 */
-	public OnBoardSensor() {
+	public OnBoardSensor(ContextEngine ce) {
 		super();
+		this.ctxEngine = ce;
 	}
 
 	/**

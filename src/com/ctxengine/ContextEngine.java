@@ -7,7 +7,7 @@ package com.ctxengine;
  * @author shinda
  *
  */
-public abstract class ContextEngine {
+public class ContextEngine {
 	
 	/**
 	 * 

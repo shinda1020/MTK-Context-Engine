@@ -6,7 +6,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Scanner;
 
+import com.ctxengine.ContextEngine;
 import com.ctxengine.sensors.IMU;
+import com.ctxengine.sensors.OnBoardSensor;
 
 /**
  * 
@@ -26,21 +28,9 @@ public class CETest {
 	public static void main(String[] args) throws IOException,
 			InterruptedException {
 		// TODO Auto-generated method stub
-//		System.out.println("Context engine started");
-//
-//		IMU imu = new IMU();
-//		
-//		Process pr = Runtime.getRuntime().exec("sensorbin/test");
-//
-//		InputStream stdin = pr.getInputStream();
-//		InputStreamReader isr = new InputStreamReader(stdin);
-//		BufferedReader br = new BufferedReader(isr);
-//
-//		String line = null;
-//		while ((line = br.readLine()) != null)
-//			System.out.println(line);
+		ContextEngine ce = new ContextEngine();
 		
-		IMU imu = new IMU();
+		OnBoardSensor imu = new IMU(ce);
 		imu.startSensor();
 		
 		Scanner s = new Scanner(System.in);

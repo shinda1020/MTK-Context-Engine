@@ -3,10 +3,12 @@
  */
 package com.ctxengine.sensors;
 
+import com.ctxengine.ContextEngine;
+
 /**
  * This class is an IMU sensor class inherited from OnBoardSensor.
  * <p>
- * In particular this sensor class handles the shaken event.
+ * In particular, this sensor class handles the shaken event.
  * <p>
  * 
  * @author Shinda
@@ -16,33 +18,58 @@ public class IMU extends OnBoardSensor {
 
 	final private String sensorThreadName = "IMU";
 	final private String sensorModulePath = "sensorbin/test";
-	
+
 	/**
-	 * 
+	 * Naive constructor
 	 */
-	public IMU() {
-		// TODO Auto-generated constructor stub
-	}
-	
-	@Override
-	protected void handleSensorMsg(String msg) {
-		System.out.println(msg);
+	public IMU(ContextEngine ce) {
+		super(ce);
 	}
 
+	/**
+	 * Override abstract function from parent class to update context.
+	 * <p>
+	 * Shake : the shaken event
+	 * 
+	 * @param msg
+	 *            The sensor message read from stdout.
+	 */
 	@Override
-	protected String getSensorModulePath() {
+	protected void handleSensorMsg(String msg) {
+		if (msg.compareToIgnoreCase("shake") == 0) {
+			System.out.println(msg);
+		}
+
+	}
+
+	/**
+	 * Override abstract function from parent class to configure the path of the
+	 * sensor module executable.
+	 * 
+	 * @return The path where IMU module executable is stored.
+	 */
+	@Override
+	final protected String getSensorModulePath() {
 		return this.sensorModulePath;
 	}
 
+	/**
+	 * Override abstract function from parent class to configure the name of the
+	 * IMU sensor thread.
+	 * 
+	 * @return The name of the IMU sensor thread.
+	 */
 	@Override
-	protected String getSensorThreadName() {
+	final protected String getSensorThreadName() {
 		return this.sensorThreadName;
 	}
 
 }
 
-// From src folder, run javah -jni com.contexts.IMU to generate com_contexts_IMU.h file
+// From src folder, run javah -jni com.contexts.IMU to generate
+// com_contexts_IMU.h file
 // Then write the source file and use the following command to compile
-// g++ "-I/System/Library/Frameworks/JavaVM.framework/Versions/Current/Headers" 
+// g++ "-I/System/Library/Frameworks/JavaVM.framework/Versions/Current/Headers"
 // -c com_contexts_IMU.cpp
-// To generate binary file, use this command: g++ -framework JavaVM -o test imu.o
+// To generate binary file, use this command: g++ -framework JavaVM -o test
+// imu.o
