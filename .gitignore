@@ -4,6 +4,9 @@
 # Ignore Mac files
 .DS_Store
 
+# Ignore sensor binaries
+/sensorbin/
+
 *.class
 
 # Mobile Tools for Java (J2ME)
