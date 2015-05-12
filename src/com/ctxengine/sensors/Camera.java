@@ -15,7 +15,7 @@ public class Camera extends OnBoardSensor implements ICameraCtxUpdated {
 	final private String sensorThreadName = "Cam";
 
 	/* The path where the sensor module executable is stored */
-	final private String sensorModulePath = "sensorbin/test";
+	final private String sensorModulePath = "sensorbin/cam";
 
 	/*
 	 * The interface to which this sensor module passes events for actual
@@ -44,7 +44,7 @@ public class Camera extends OnBoardSensor implements ICameraCtxUpdated {
 	 */
 	@Override
 	protected void handleSensorMsg(String msg) {
-		if (msg.compareToIgnoreCase("shake") == 0) {
+		if (msg.compareToIgnoreCase("face") == 0) {
 			this.faceDetected();
 		}
 	}

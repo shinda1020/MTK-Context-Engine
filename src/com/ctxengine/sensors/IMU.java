@@ -17,7 +17,7 @@ public class IMU extends OnBoardSensor implements IIMUCtxUpdated {
 	final private String sensorThreadName = "IMU";
 
 	/* The path where the sensor module executable is stored */
-	final private String sensorModulePath = "sensorbin/test";
+	final private String sensorModulePath = "sensorbin/IMU";
 
 	/*
 	 * The interface to which this sensor module passes events for actual
