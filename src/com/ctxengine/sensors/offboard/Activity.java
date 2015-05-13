@@ -11,7 +11,7 @@ import com.ctxengine.sensors.OffBoardSensor;
  * @author Shinda
  * @version 1.0 05/10/2015
  */
-public class Activity extends OffBoardSensor {
+public final class Activity extends OffBoardSensor {
 
 	/* The name of the sensor thread */
 	final private String SENSOR_THREAD_NAME = "Activity";
@@ -34,8 +34,9 @@ public class Activity extends OffBoardSensor {
 	 */
 	@Override
 	protected void handleSensorMsg(String msg) {
-		// TODO Auto-generated method stub
-		System.out.println(msg);
+		if (msg.compareToIgnoreCase("none") == 0) {
+			this.pubContext("none");
+		}
 
 	}
 

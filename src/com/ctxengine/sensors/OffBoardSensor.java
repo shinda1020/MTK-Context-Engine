@@ -103,6 +103,16 @@ public abstract class OffBoardSensor extends JedisPubSub {
 		this.sensorThread.stop();
 	}
 
+	/**
+	 * This function publishes context through corresponding Redis channel.
+	 * 
+	 * @param ctx
+	 *            The context string
+	 */
+	protected final void pubContext(String ctx) {
+		jedis.publish(this.getSensorChannelFromRedis(), ctx);
+	}
+
 	/******************************************************************
 	 * Implementation of abstract methods
 	 ******************************************************************/
