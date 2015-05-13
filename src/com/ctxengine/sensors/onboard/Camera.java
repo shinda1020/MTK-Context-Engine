@@ -14,10 +14,10 @@ import com.ctxengine.sensors.OnBoardSensor;
 public class Camera extends OnBoardSensor implements ICameraCtxUpdated {
 
 	/* The name of the sensor thread */
-	final private String sensorThreadName = "Cam";
+	final private String SENSOR_THREAD_NAME = "Cam";
 
 	/* The path where the sensor module executable is stored */
-	final private String sensorModulePath = "sensorbin/cam";
+	final private String SENSOR_MODULE_PATH = "sensorbin/cam";
 
 	/*
 	 * The interface to which this sensor module passes events for actual
@@ -59,7 +59,7 @@ public class Camera extends OnBoardSensor implements ICameraCtxUpdated {
 	 */
 	@Override
 	final protected String getSensorModulePath() {
-		return this.sensorModulePath;
+		return this.SENSOR_MODULE_PATH;
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class Camera extends OnBoardSensor implements ICameraCtxUpdated {
 	 */
 	@Override
 	final protected String getSensorThreadName() {
-		return this.sensorThreadName;
+		return this.SENSOR_THREAD_NAME;
 	}
 
 	/******************************************************************

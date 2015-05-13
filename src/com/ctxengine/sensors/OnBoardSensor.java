@@ -22,7 +22,10 @@ import com.ctxengine.ContextEngine;
 public abstract class OnBoardSensor {
 
 	/* The private sensor thread instance */
-	protected SensorThread sensorThread;
+	private SensorThread sensorThread;
+
+	/* The flag that specifies the running state of the sensor module */
+	private boolean isRunning = false;
 
 	/**
 	 * This abstract function defines the behaviors after certain sensor
@@ -51,13 +54,20 @@ public abstract class OnBoardSensor {
 	 * This function starts the sensor module from predefined module path.
 	 */
 	public void startSensor() {
-		sensorThread = new SensorThread(this.getSensorThreadName(),
-				this.getSensorModulePath());
-		sensorThread.start();
+		if (!isRunning) {
+			sensorThread = new SensorThread(this.getSensorThreadName(),
+					this.getSensorModulePath());
+			sensorThread.start();
+			isRunning = true;
+		}
 	}
 
+	/**
+	 * This function stops the sensor module service.
+	 */
 	public void stopSensor() {
 		this.sensorThread.stop();
+		isRunning = false;
 	}
 
 	/**
