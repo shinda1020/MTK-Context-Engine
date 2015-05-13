@@ -1,4 +1,6 @@
-package com.ctxengine.sensors;
+package com.ctxengine.sensors.onboard;
+
+import com.ctxengine.sensors.OnBoardSensor;
 
 /**
  * This class is a camera sensor class inherited from OnBoardSensor.

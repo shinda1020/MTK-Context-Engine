@@ -147,8 +147,8 @@ public abstract class OnBoardSensor {
 		 * This function starts the sensor thread.
 		 */
 		public void start() {
-			if (t == null) {
-				this.isInterrupted = false;
+			isInterrupted = false;
+			if (t == null) {				
 				t = new Thread(this, threadName);
 				t.setDaemon(false);
 				t.start();
@@ -159,8 +159,8 @@ public abstract class OnBoardSensor {
 		 * This function stops the sensor thread and kills the sensor process.
 		 */
 		public void stop() {
-			if (t != null) {
-				this.isInterrupted = true;
+			isInterrupted = true;
+			if (t != null) {				
 				if (pr != null) {
 					pr.destroy();
 				}

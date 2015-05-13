@@ -1,9 +1,9 @@
 package com.ctxengine;
 
-import com.ctxengine.sensors.Camera;
-import com.ctxengine.sensors.ICameraCtxUpdated;
-import com.ctxengine.sensors.IIMUCtxUpdated;
-import com.ctxengine.sensors.IMU;
+import com.ctxengine.sensors.onboard.Camera;
+import com.ctxengine.sensors.onboard.ICameraCtxUpdated;
+import com.ctxengine.sensors.onboard.IIMUCtxUpdated;
+import com.ctxengine.sensors.onboard.IMU;
 
 /**
  * @author shinda
