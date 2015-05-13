@@ -1,5 +1,6 @@
 package com.ctxengine;
 
+import com.ctxengine.sensors.ICtxUpdated;
 import com.ctxengine.sensors.onboard.Camera;
 import com.ctxengine.sensors.onboard.ICameraCtxUpdated;
 import com.ctxengine.sensors.onboard.IIMUCtxUpdated;
@@ -9,7 +10,7 @@ import com.ctxengine.sensors.onboard.IMU;
  * @author shinda
  * 
  */
-public class ContextEngine implements IIMUCtxUpdated, ICameraCtxUpdated {
+public class ContextEngine implements ICtxUpdated {
 
 	private static IMU imuSensor;
 	private static Camera camSensor;
@@ -49,7 +50,7 @@ public class ContextEngine implements IIMUCtxUpdated, ICameraCtxUpdated {
 	 * This function instantiates the static camSensor variable and starts the
 	 * sensing service.
 	 */
-	public void startCam() {
+	public void startCamera() {
 		if (camSensor == null) {
 			camSensor = new Camera(this);
 			camSensor.startSensor();

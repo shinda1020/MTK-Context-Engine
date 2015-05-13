@@ -22,48 +22,65 @@ public final class Activity extends OffBoardSensor {
 	/* The name of the sensor channel on Redis */
 	final private String REDIS_SENSOR_CH = "ACTIVITY_CH";
 
+	/**
+	 * This constructor initiates the connection from the sensor module to the
+	 * Redis server.
+	 * 
+	 * @param hostName
+	 *            The host name of the Redis server that this sensor module
+	 *            connects to.
+	 */
 	public Activity(String hostName) {
 		super(hostName);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * This function handles the sensor message read from stdout.
 	 * 
-	 * @see
-	 * com.ctxengine.sensors.OffBoardSensor#handleSensorMsg(java.lang.String)
+	 * @param msg
+	 *            The sensor message read from stdout.
 	 */
 	@Override
 	protected void handleSensorMsg(String msg) {
+		// No activity detected
 		if (msg.compareToIgnoreCase("none") == 0) {
 			this.pubContext("none");
 		}
-
+		// Low activity detected
+		else if (msg.compareToIgnoreCase("low") == 0) {
+			this.pubContext("low");
+		}
+		// High activity detected
+		else if (msg.compareToIgnoreCase("high") == 0) {
+			this.pubContext("high");
+		}
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * This function defines the name of the sensor thread.
 	 * 
-	 * @see com.ctxengine.sensors.OffBoardSensor#getSensorThreadName()
+	 * @return The name of the sensor thread.
 	 */
 	@Override
 	protected String getSensorThreadName() {
 		return this.SENSOR_THREAD_NAME;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * This function defines where to run the sensor module.
 	 * 
-	 * @see com.ctxengine.sensors.OffBoardSensor#getSensorModulePath()
+	 * @return The path where the sensor executable is stored.
 	 */
 	@Override
 	protected String getSensorModulePath() {
 		return this.SENSOR_MODULE_PATH;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * This abstract function defines the channel that this sensor subscribes
+	 * to, in this case, ACTIVITY_CH.
 	 * 
-	 * @see com.ctxengine.sensors.OffBoardSensor#getSensorChannelFromRedis()
+	 * @return the channel that this sensor subscribes.
 	 */
 	@Override
 	protected String getSensorChannelFromRedis() {

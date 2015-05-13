@@ -26,7 +26,7 @@ public class OnBoardTest {
 	public static void main(String[] args) {
 		ContextEngine ce = new ContextEngine();
 		ce.startIMU();
-		ce.startCam();
+		ce.startCamera();
 
 		Scanner s = new Scanner(System.in);
 		if (s.nextLine() != null) {

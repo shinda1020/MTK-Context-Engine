@@ -16,7 +16,7 @@ public class CETest {
 		// TODO Auto-generated method stub
 		ContextEngine ce = new ContextEngine();
 		ce.startIMU();
-		ce.startCam();
+		ce.startCamera();
 
 		Scanner s = new Scanner(System.in);
 		if (s.nextLine() != null) {
