@@ -25,6 +25,10 @@ public abstract class OnBoardSensor {
 	/* The flag that specifies the running state of the sensor module */
 	private boolean isRunning = false;
 
+	/******************************************************************
+	 * Abstract methods
+	 ******************************************************************/
+
 	/**
 	 * This abstract function defines the behaviors after certain sensor
 	 * messages are received.
@@ -48,6 +52,11 @@ public abstract class OnBoardSensor {
 	 */
 	protected abstract String getSensorThreadName();
 
+	/******************************************************************
+	 * Global implementation of sensor services (No need to change for
+	 * individual sensors)
+	 ******************************************************************/
+
 	/**
 	 * This function starts the sensor module from predefined module path.
 	 */
@@ -67,6 +76,10 @@ public abstract class OnBoardSensor {
 		this.sensorThread.stop();
 		isRunning = false;
 	}
+
+	/******************************************************************
+	 * Inner class
+	 ******************************************************************/
 
 	/**
 	 * This inner class is designed to start sensor services as threads to stop

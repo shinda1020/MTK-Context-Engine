@@ -36,6 +36,10 @@ public class IMU extends OnBoardSensor implements IIMUCtxUpdated {
 	public IMU(IIMUCtxUpdated _ctxInterface) {
 		setCtxInterface(_ctxInterface);
 	}
+	
+	/******************************************************************
+	 * Implementation of abstract methods
+	 ******************************************************************/
 
 	/**
 	 * Override abstract function from parent class to update context.

@@ -52,6 +52,10 @@ public abstract class OffBoardSensor extends JedisPubSub {
 		jedis = pool.getResource();
 	}
 
+	/******************************************************************
+	 * Abstract methods
+	 ******************************************************************/
+
 	/**
 	 * This abstract function defines the behaviors after certain sensor
 	 * messages are received.
@@ -99,24 +103,10 @@ public abstract class OffBoardSensor extends JedisPubSub {
 		this.sensorThread.stop();
 	}
 
-	/**
-	 * This function overrides the original abstract function from JedisPubSub
-	 * class.
-	 * <p>
-	 * Basically, what this function does is to handle all commands from the
-	 * channel to which this sensor service subscribes.
-	 * <p>
-	 * The two possible commands are:
-	 * <p>
-	 * start : to start the sensor module.
-	 * <p>
-	 * stop : to stop the sensor module.
-	 * 
-	 * @param channel
-	 *            The Redis channel from which the command comes.
-	 * @param command
-	 *            The command from the aforementioned Redis channel.
-	 */
+	/******************************************************************
+	 * Implementation of abstract methods
+	 ******************************************************************/
+
 	@Override
 	public void onMessage(String arg0, String arg1) {
 	}
