@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import com.ctxengine.ContextEngine;
-
 /**
  * This class is an abstract class of all on-board sensor services.
  * <p>

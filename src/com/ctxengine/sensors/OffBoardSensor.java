@@ -1,17 +1,9 @@
-/**
- * 
- */
 package com.ctxengine.sensors;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Scanner;
-import java.util.Set;
-
-import com.ctxengine.ContextEngine;
-import com.ctxengine.sensors.OnBoardSensor.SensorThread;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
