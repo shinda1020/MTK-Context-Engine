@@ -17,8 +17,8 @@ import redis.clients.jedis.JedisPubSub;
  * this case. Unlike on-board sensors, each sensor module can be started
  * seperately to run sensor service, pub/sub to application modules, etc.
  * <p>
- * This is the current version of the off-board service. The major difference is
- * that this implementation does not subscribe to Redis channels and wait for
+ * This is the next version of the off-board service. The major difference is
+ * that this implementation subscribes to Redis channels and waits for
  * activation. Currently, we just assume sensors always run at backend and are
  * never turned off. Also, there is no need for remote configuration in our
  * current assumption. This is to be updated.
@@ -27,10 +27,20 @@ import redis.clients.jedis.JedisPubSub;
  * @version 1.0 05/12/2015
  */
 
-public abstract class OffBoardSensor extends JedisPubSub {
+public abstract class OffBoardSensor_Backup extends JedisPubSub {
 
 	/* The private sensor thread instance */
 	private SensorThread sensorThread;
+
+	/*
+	 * The number of applications that subscribes to this sensor module. Unlike
+	 * on-board sensors, which can only be started by one application at a time,
+	 * the off-board sensors may serve multiple apps at the same time. Hence,
+	 * once an app is trying to terminate the sensor service, it should count
+	 * the current total number of apps that subscribe to itself. If curAppNum
+	 * equals 0, then stop the sensor. Otherwise leave it alone.
+	 */
+	private int curAppNum = 0;
 
 	/* The Jedis pool instance */
 	private static JedisPool pool;
@@ -46,10 +56,14 @@ public abstract class OffBoardSensor extends JedisPubSub {
 	 *            The host name of the Redis server that this sensor module
 	 *            connects to.
 	 */
-	public OffBoardSensor(String hostName) {
+	public OffBoardSensor_Backup(String hostName) {
 		// Initiate the connection.
 		pool = new JedisPool(new JedisPoolConfig(), hostName);
-		jedis = pool.getResource();
+		Jedis jedis = pool.getResource();
+
+		// Subscribe to the corresponding channel.
+		jedis.subscribe(this, this.getSensorChannelFromRedis());
+
 	}
 
 	/**
@@ -118,7 +132,35 @@ public abstract class OffBoardSensor extends JedisPubSub {
 	 *            The command from the aforementioned Redis channel.
 	 */
 	@Override
-	public void onMessage(String arg0, String arg1) {
+	public void onMessage(String channel, String command) {
+		// Make sure the command comes from the channel that this sensor
+		// subscribes to.
+		if (channel.compareToIgnoreCase(this.getSensorChannelFromRedis()) == 0) {
+			// The command to start the sensor module
+			if (command.compareToIgnoreCase("start") == 0) {
+				// Check if the sensor has already been started by counting the
+				// number of apps that subscribe to this sensor service.
+				if (curAppNum == 0) {
+					this.startSensor();
+				}
+				// Don't forget to increase the curAppNum since a new app
+				// subscribes to this sensor service.
+				curAppNum++;
+			}
+			// The command to stop the sensor module
+			else if (command.compareToIgnoreCase("stop") == 0) {
+				// Don't forget to decrease the curAppNum since an app
+				// unsubscribes from this sensor service.
+				curAppNum = Math.max(0, curAppNum - 1); // Make sure this number
+														// is not negative.
+
+				// Check if there are still apps subscribing to this sensor
+				// service. If none, terminate the service.
+				if (curAppNum == 0) {
+					this.stopSensor();
+				}
+			}
+		}
 	}
 
 	@Override
