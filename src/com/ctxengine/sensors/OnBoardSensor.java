@@ -8,11 +8,11 @@ import java.io.InputStreamReader;
 import com.ctxengine.ContextEngine;
 
 /**
- * This class is an abstract class of all on board sensor services.
+ * This class is an abstract class of all on-board sensor services.
  * <p>
- * Unlike off board sensor services, the on board ones are called and started
- * from the context engine directly, whereas the off board ones are activated
- * through Redis.
+ * Unlike off-board sensor services, the on-board ones are called and started
+ * from the context engine directly, whereas the off-board ones are activated
+ * through network.
  * <p>
  * 
  * @author Shinda
@@ -105,7 +105,9 @@ public abstract class OnBoardSensor {
 		 * Then the thread reads the output from stdout (Hence, when
 		 * implementing the sensor modules, use fflush(stdout) to avoid using
 		 * buffer), and then pass to the OnBoardSensor class to handle the
-		 * output.
+		 * output. This is the first version of the sensor services. In the
+		 * future, we aim to integrate sensor services written in other
+		 * languages with Java via JNI, such as C/C++.
 		 */
 		public void run() {
 
@@ -148,7 +150,7 @@ public abstract class OnBoardSensor {
 		 */
 		public void start() {
 			isInterrupted = false;
-			if (t == null) {				
+			if (t == null) {
 				t = new Thread(this, threadName);
 				t.setDaemon(false);
 				t.start();
@@ -160,7 +162,7 @@ public abstract class OnBoardSensor {
 		 */
 		public void stop() {
 			isInterrupted = true;
-			if (t != null) {				
+			if (t != null) {
 				if (pr != null) {
 					pr.destroy();
 				}

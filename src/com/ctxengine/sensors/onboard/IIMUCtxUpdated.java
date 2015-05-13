@@ -12,5 +12,5 @@ public interface IIMUCtxUpdated {
 	/**
 	 * Implement this function to handle shaken event.
 	 */
-	void shakeDetected();
+	void OnBoardIMUShakeDetected();
 }

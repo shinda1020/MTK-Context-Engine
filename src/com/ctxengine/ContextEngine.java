@@ -74,7 +74,7 @@ public class ContextEngine implements IIMUCtxUpdated, ICameraCtxUpdated {
 	 * module.
 	 */
 	@Override
-	public void shakeDetected() {
+	public void OnBoardIMUShakeDetected() {
 		System.out.println("Shake detected");
 	}
 
@@ -87,7 +87,7 @@ public class ContextEngine implements IIMUCtxUpdated, ICameraCtxUpdated {
 	 * from camera module.
 	 */
 	@Override
-	public void faceDetected() {
+	public void OnBoardCameraFaceDetected() {
 		System.out.println("Face detected");
 	}
 

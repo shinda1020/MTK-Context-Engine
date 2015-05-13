@@ -48,7 +48,7 @@ public class IMU extends OnBoardSensor implements IIMUCtxUpdated {
 	@Override
 	protected void handleSensorMsg(String msg) {
 		if (msg.compareToIgnoreCase("shake") == 0) {
-			this.shakeDetected();
+			this.OnBoardIMUShakeDetected();
 		}
 	}
 
@@ -83,8 +83,8 @@ public class IMU extends OnBoardSensor implements IIMUCtxUpdated {
 	 * interface by passing the event to the context engine.
 	 */
 	@Override
-	public void shakeDetected() {
-		ctxInterface.shakeDetected();
+	public void OnBoardIMUShakeDetected() {
+		ctxInterface.OnBoardIMUShakeDetected();
 	}
 
 	/**

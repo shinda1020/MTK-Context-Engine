@@ -14,5 +14,5 @@ public interface ICameraCtxUpdated {
 	/**
 	 * Implement this function to handle shaken event.
 	 */
-	void faceDetected();
+	void OnBoardCameraFaceDetected();
 }

@@ -47,7 +47,7 @@ public class Camera extends OnBoardSensor implements ICameraCtxUpdated {
 	@Override
 	protected void handleSensorMsg(String msg) {
 		if (msg.compareToIgnoreCase("face") == 0) {
-			this.faceDetected();
+			this.OnBoardCameraFaceDetected();
 		}
 	}
 
@@ -82,8 +82,8 @@ public class Camera extends OnBoardSensor implements ICameraCtxUpdated {
 	 * ICameraCtxUpdated interface by passing the event to the context engine.
 	 */
 	@Override
-	public void faceDetected() {
-		ctxInterface.faceDetected();
+	public void OnBoardCameraFaceDetected() {
+		ctxInterface.OnBoardCameraFaceDetected();
 	}
 
 	/**
