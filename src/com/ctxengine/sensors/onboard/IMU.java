@@ -12,7 +12,7 @@ import com.ctxengine.sensors.OnBoardSensor;
  * @author Shinda
  * @version 1.0 05/10/2015
  */
-public class IMU extends OnBoardSensor implements IIMUCtxUpdated {
+public final class IMU extends OnBoardSensor implements IIMUCtxUpdated {
 
 	/* The name of the sensor thread */
 	final private String sensorThreadName = "IMU";
@@ -36,7 +36,7 @@ public class IMU extends OnBoardSensor implements IIMUCtxUpdated {
 	public IMU(IIMUCtxUpdated _ctxInterface) {
 		setCtxInterface(_ctxInterface);
 	}
-	
+
 	/******************************************************************
 	 * Implementation of abstract methods
 	 ******************************************************************/
@@ -81,7 +81,7 @@ public class IMU extends OnBoardSensor implements IIMUCtxUpdated {
 	/******************************************************************
 	 * IIMUCtxUpdated interface
 	 ******************************************************************/
-	
+
 	/**
 	 * This function implements the shakeDetected function in the IIMUCtxUpdated
 	 * interface by passing the event to the context engine.

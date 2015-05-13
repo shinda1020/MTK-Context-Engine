@@ -11,7 +11,7 @@ import com.ctxengine.sensors.OnBoardSensor;
  * @author Shinda
  * @version 1.0 05/10/2015
  */
-public class Camera extends OnBoardSensor implements ICameraCtxUpdated {
+public final class Camera extends OnBoardSensor implements ICameraCtxUpdated {
 
 	/* The name of the sensor thread */
 	final private String SENSOR_THREAD_NAME = "Cam";
