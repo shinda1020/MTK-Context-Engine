@@ -5,7 +5,6 @@ package com;
 
 import java.util.Scanner;
 
-import com.ctxengine.ContextEngine;
 import com.ctxengine.sensors.offboard.Activity;
 
 /**

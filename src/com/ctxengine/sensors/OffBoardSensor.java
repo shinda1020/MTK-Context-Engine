@@ -289,27 +289,4 @@ public abstract class OffBoardSensor extends JedisPubSub {
 		}
 
 	} /* SensorThread */
-
-	// /**
-	// * @param args
-	// */
-	// public static void main(String[] args) {
-	// System.out.println("Running");
-	// JedisPool pool = new JedisPool(new JedisPoolConfig(), "localhost");
-	//
-	// OffBoardSensor sensor = new OffBoardSensor();
-	//
-	// try {
-	// Jedis jedis = pool.getResource();
-	//
-	// // / ... do stuff here ... for example
-	// // jedis.set("xinda", "zeng");
-	// // jedis.publish("IMU", "shake");
-	// jedis.subscribe(sensor, "IMU");
-	//
-	// } finally {
-	// // / ... when closing your application:
-	// pool.destroy();
-	// }
-	// }
 }
