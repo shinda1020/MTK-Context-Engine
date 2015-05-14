@@ -12,6 +12,7 @@ TARGET = IMU
 
 all : $(OBJS) main.o
 	$(GCC) -o $(TARGET) $(OBJS) main.o -lpthread
+	mv $(TARGET) ../../sensorbin/
 
 %.o : %.cpp
 	$(GCC) -c $< -o $@
