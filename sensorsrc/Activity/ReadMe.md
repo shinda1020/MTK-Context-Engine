@@ -1,19 +1,15 @@
-# The library paths
-LIB_PATH = /usr/local/Cellar/libfreenect/0.5.1/lib/ /opt/local/lib
-# The libraries
-LIBS = -lopencv_core -lopencv_highgui -lopencv_photo -lopencv_imgproc -lfreenect
+# Activity sensing
 
-# The include paths
-INCLUDE_PATH = /usr/local/include/libfreenect /opt/local/include/
+This is the activity sensing module with Kinect depth sensor. At this moment, this module is implemented on Mac platform.
 
-# Build flags
-LDFLAGS = $(foreach d, $(LIB_PATH), -L$d)
-CFLAGS  = $(foreach d, $(INCLUDE_PATH), -I$d)
+## How it works
 
-activity : main.cpp
-	g++ $(LDFLAGS) $(LIBS) $(CFLAGS) $< -o $@
+This module reads depth data from the Kinect depth sensor and smoothes the image using impainting. Then the program computes number of significantly different pixels between frames, and uses this number to infer activity level (none, low, high).
 
-clean :
-	rm activity
+## Dependencies
 
-.PHONY : clean
+This program requires libopencv_core, libopencv_imgproc, libopencv_photo and libopencv_highgui (for debugging) from OpenCV. Also, it requires libfreenect to allow Mac to work with Kinect.
+
+## How to build
+
+To build this program, first edit Makefile to configure search paths for includes and libraries. Then run "make" to build it. The sensor binary would automatically be moved to the "sensorbin" directory.
