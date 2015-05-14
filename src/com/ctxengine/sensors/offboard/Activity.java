@@ -77,7 +77,7 @@ public final class Activity extends OffBoardSensor {
 	}
 
 	/**
-	 * This abstract function defines the channel that this sensor subscribes
+	 * This function defines the channel that this sensor subscribes
 	 * to, in this case, ACTIVITY_CH.
 	 * 
 	 * @return the channel that this sensor subscribes.

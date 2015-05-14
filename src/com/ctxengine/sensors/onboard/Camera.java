@@ -33,7 +33,7 @@ public final class Camera extends OnBoardSensor implements ICameraCtxUpdated {
 	 *            module passes events for actual handling.
 	 */
 	public Camera(ICameraCtxUpdated _ctxInterface) {
-		setCtxInterface(_ctxInterface);
+		this.ctxInterface = _ctxInterface;
 	}
 
 	/******************************************************************
@@ -89,15 +89,4 @@ public final class Camera extends OnBoardSensor implements ICameraCtxUpdated {
 	public void OnBoardCameraFaceDetected() {
 		ctxInterface.OnBoardCameraFaceDetected();
 	}
-
-	/**
-	 * This is the local setter of the ICameraCtxUpdated.
-	 * 
-	 * @param _ctxInterface
-	 *            The ICameraCtxUpdated that actually does the event handling.
-	 */
-	public void setCtxInterface(ICameraCtxUpdated _ctxInterface) {
-		this.ctxInterface = _ctxInterface;
-	}
-
 }

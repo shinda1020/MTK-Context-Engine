@@ -1,9 +1,8 @@
 package com.ctxengine;
 
 import com.ctxengine.sensors.ICtxUpdated;
+import com.ctxengine.sensors.offboard.ActivityClient;
 import com.ctxengine.sensors.onboard.Camera;
-import com.ctxengine.sensors.onboard.ICameraCtxUpdated;
-import com.ctxengine.sensors.onboard.IIMUCtxUpdated;
 import com.ctxengine.sensors.onboard.IMU;
 
 /**
@@ -12,11 +11,18 @@ import com.ctxengine.sensors.onboard.IMU;
  */
 public class ContextEngine implements ICtxUpdated {
 
+	String hostName = "localhost";
+
 	/******************************************************************
-	 * On-board sensor control
+	 * On-board sensor
 	 ******************************************************************/
 	private static IMU imuSensor;
 	private static Camera camSensor;
+
+	/******************************************************************
+	 * Off-board sensor
+	 ******************************************************************/
+	private static ActivityClient actSensor;
 
 	/**
 	 * Naive constructor
@@ -26,7 +32,7 @@ public class ContextEngine implements ICtxUpdated {
 	}
 
 	/******************************************************************
-	 * Sensor control
+	 * On-board sensor control
 	 ******************************************************************/
 
 	/**
@@ -70,6 +76,30 @@ public class ContextEngine implements ICtxUpdated {
 	}
 
 	/******************************************************************
+	 * Off-board sensor subscription
+	 ******************************************************************/
+
+	/**
+	 * This function instantiates the static actSensor variable and starts the
+	 * sensing service.
+	 */
+	public void startActivity() {
+		if (actSensor == null) {
+			actSensor = new ActivityClient(hostName, this);
+			actSensor.startSensor();
+		}
+	}
+
+	/**
+	 * This function terminates the activity sensing service.
+	 */
+	public void stopActivity() {
+		if (actSensor != null) {
+			actSensor.stopSensor();
+		}
+	}
+
+	/******************************************************************
 	 * IIMUCtxUpdated interface handling
 	 ******************************************************************/
 
@@ -104,7 +134,7 @@ public class ContextEngine implements ICtxUpdated {
 	 */
 	@Override
 	public void OffBoardActivityNoneDetected() {
-
+		System.out.println("None");
 	}
 
 	/**
@@ -112,7 +142,7 @@ public class ContextEngine implements ICtxUpdated {
 	 */
 	@Override
 	public void OffBoardActivityLowDetected() {
-
+		System.out.println("Low");
 	}
 
 	/**
@@ -120,7 +150,7 @@ public class ContextEngine implements ICtxUpdated {
 	 */
 	@Override
 	public void OffBoardActivityHighDetected() {
-
+		System.out.println("High");
 	}
 
 }

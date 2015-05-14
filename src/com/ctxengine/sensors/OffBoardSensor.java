@@ -87,6 +87,11 @@ public abstract class OffBoardSensor extends JedisPubSub {
 	 */
 	protected abstract String getSensorThreadName();
 
+	/******************************************************************
+	 * Global implementation of sensor services (No need to change for
+	 * individual sensors)
+	 ******************************************************************/
+
 	/**
 	 * This function starts the sensor module from predefined module path.
 	 */
@@ -168,14 +173,14 @@ public abstract class OffBoardSensor extends JedisPubSub {
 		/**
 		 * The constructor
 		 * 
-		 * @param name
+		 * @param _threadName
 		 *            The thread name
-		 * @param path
+		 * @param _path
 		 *            The path of sensor module executable
 		 */
-		SensorThread(String name, String path) {
-			threadName = name;
-			runnablePath = path;
+		SensorThread(String _threadName, String _path) {
+			threadName = _threadName;
+			runnablePath = _path;
 		}
 
 		/**

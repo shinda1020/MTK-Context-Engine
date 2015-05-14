@@ -34,7 +34,7 @@ public final class IMU extends OnBoardSensor implements IIMUCtxUpdated {
 	 *            passes events for actual handling.
 	 */
 	public IMU(IIMUCtxUpdated _ctxInterface) {
-		setCtxInterface(_ctxInterface);
+		this.ctxInterface = _ctxInterface;
 	}
 
 	/******************************************************************
@@ -83,22 +83,12 @@ public final class IMU extends OnBoardSensor implements IIMUCtxUpdated {
 	 ******************************************************************/
 
 	/**
-	 * This function implements the shakeDetected function in the IIMUCtxUpdated
-	 * interface by passing the event to the context engine.
+	 * This function implements the OnBoardIMUShakeDetected function in the
+	 * IIMUCtxUpdated interface by passing the event to the context engine.
 	 */
 	@Override
 	public void OnBoardIMUShakeDetected() {
 		ctxInterface.OnBoardIMUShakeDetected();
-	}
-
-	/**
-	 * This is the local setter of the IIMUCtxUpdated.
-	 * 
-	 * @param _ctxInterface
-	 *            The IIMUCtxUpdated that actually does the event handling.
-	 */
-	public void setCtxInterface(IIMUCtxUpdated _ctxInterface) {
-		this.ctxInterface = _ctxInterface;
 	}
 
 }
