@@ -3,6 +3,7 @@
  */
 package com.ctxengine.sensors;
 
+import com.ctxengine.sensors.offboard.IActivityCtxUpdated;
 import com.ctxengine.sensors.onboard.IIMUCtxUpdated;
 import com.ctxengine.sensors.onboard.ICameraCtxUpdated;
 
@@ -13,6 +14,7 @@ import com.ctxengine.sensors.onboard.ICameraCtxUpdated;
  * @author Shinda
  * @version 1.0 05/10/2015
  */
-public interface ICtxUpdated extends IIMUCtxUpdated, ICameraCtxUpdated {
+public interface ICtxUpdated extends IIMUCtxUpdated, ICameraCtxUpdated,
+		IActivityCtxUpdated {
 
 }

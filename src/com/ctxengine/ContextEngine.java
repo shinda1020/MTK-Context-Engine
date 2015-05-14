@@ -12,6 +12,9 @@ import com.ctxengine.sensors.onboard.IMU;
  */
 public class ContextEngine implements ICtxUpdated {
 
+	/******************************************************************
+	 * On-board sensor control
+	 ******************************************************************/
 	private static IMU imuSensor;
 	private static Camera camSensor;
 
@@ -90,6 +93,34 @@ public class ContextEngine implements ICtxUpdated {
 	@Override
 	public void OnBoardCameraFaceDetected() {
 		System.out.println("Face detected");
+	}
+
+	/******************************************************************
+	 * IActivityCtxUpdated interface handling
+	 ******************************************************************/
+
+	/**
+	 * Implement this function to handle none-activity event.
+	 */
+	@Override
+	public void OffBoardActivityNoneDetected() {
+
+	}
+
+	/**
+	 * Implement this function to handle low-activity event.
+	 */
+	@Override
+	public void OffBoardActivityLowDetected() {
+
+	}
+
+	/**
+	 * Implement this function to handle high-activity event.
+	 */
+	@Override
+	public void OffBoardActivityHighDetected() {
+
 	}
 
 }
