@@ -12,6 +12,7 @@ CFLAGS  = $(foreach d, $(INCLUDE_PATH), -I$d)
 
 activity : main.cpp
 	g++ $(LDFLAGS) $(LIBS) $(CFLAGS) $< -o $@
+	mv ./activity ../../sensorbin/activity
 
 clean :
 	rm activity
