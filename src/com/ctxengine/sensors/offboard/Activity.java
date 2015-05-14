@@ -17,7 +17,7 @@ public final class Activity extends OffBoardSensor {
 	final private String SENSOR_THREAD_NAME = "Activity";
 
 	/* The path where the sensor module executable is stored */
-	final private String SENSOR_MODULE_PATH = "sensorbin/cam";
+	final private String SENSOR_MODULE_PATH = "sensorbin/activity";
 
 	/* The name of the sensor channel on Redis */
 	final private String REDIS_SENSOR_CH = "ACTIVITY_CH";
@@ -42,6 +42,7 @@ public final class Activity extends OffBoardSensor {
 	 */
 	@Override
 	protected void handleSensorMsg(String msg) {
+		System.out.println(msg);
 		// No activity detected
 		if (msg.compareToIgnoreCase("none") == 0) {
 			this.pubContext("none");

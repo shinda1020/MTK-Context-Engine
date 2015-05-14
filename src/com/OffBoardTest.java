@@ -26,15 +26,15 @@ public class OffBoardTest {
 	public static void main(String[] args) {
 
 		Activity act1 = new Activity("localhost");
-		Activity act2 = new Activity("localhost");
+//		Activity act2 = new Activity("localhost");
 		act1.startSensor();
-		act2.startSensor();
+//		act2.startSensor();
 
 		Scanner s = new Scanner(System.in);
 		if (s.nextLine() != null) {
 			System.out.println("New line");
 			act1.stopSensor();
-			act2.stopSensor();
+//			act2.stopSensor();
 		}
 	}
 
