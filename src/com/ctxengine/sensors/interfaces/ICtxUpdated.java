@@ -1,7 +1,7 @@
-package com.ctxengine.sensors;
+package com.ctxengine.sensors.interfaces;
 
-import com.ctxengine.sensors.IOnBoardCtxUpdated;
-import com.ctxengine.sensors.IOffBoardCtxUpdated;
+import com.ctxengine.sensors.interfaces.IOffBoardCtxUpdated;
+import com.ctxengine.sensors.interfaces.IOnBoardCtxUpdated;
 
 /**
  * This interface serves as the delegate for all contexts, from both on and

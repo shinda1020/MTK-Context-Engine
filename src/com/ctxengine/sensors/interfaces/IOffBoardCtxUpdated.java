@@ -1,6 +1,5 @@
-package com.ctxengine.sensors;
+package com.ctxengine.sensors.interfaces;
 
-import com.ctxengine.sensors.offboard.IActivityCtxUpdated;
 
 /**
  * This interface serves as the delegate for all off-board sensor contexts.

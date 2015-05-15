@@ -1,11 +1,11 @@
 package com.ctxengine.sensors;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-
-import com.ctxengine.ContextEngine;
-import com.ctxengine.sensors.offboard.IActivityCtxUpdated;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -16,12 +16,22 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.ctxengine.sensors.interfaces.IOffBoardCtxUpdated;
+
 ;
 /**
- * 
+ * This class is an off-board sensor service wrappers that run on board.
+ * <p>
+ * Basically, what this class does is to communicate with corresponding
+ * off-broad sensor services through prescribed channels on Redis.
+ * <p>
+ * For each off-board sensor service, the app developer needs to create a new
+ * instance via giving the name of the sensor module. There is no need to write
+ * individual wrappers for every sensor, since the callback mechanism is
+ * implemented with Java Reflection.
  * 
  * @author Shinda
- * @version 1.0 05/12/2015
+ * @version 1.0 05/15/2015
  */
 
 public class OffBoardSensorClient {
@@ -51,6 +61,13 @@ public class OffBoardSensorClient {
 	HashMap<String, String> methodDict = new HashMap<String, String>();
 
 	/*
+	 * The initialization state of the client module. If not successful, a
+	 * possible explanation is that no such sensor module is defined in the
+	 * methods.json file.
+	 */
+	private boolean initialized = false;
+
+	/*
 	 * The interface to which the off-board sensor client passes events for
 	 * actual handling
 	 */
@@ -69,6 +86,8 @@ public class OffBoardSensorClient {
 		try {
 			this.initialize();
 		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -113,6 +132,10 @@ public class OffBoardSensorClient {
 		OffBoardSensorClient.hostName = hostName;
 	}
 
+	public boolean isInitialized() {
+		return initialized;
+	}
+
 	/******************************************************************
 	 * Global implementation of sensor services (No need to change for
 	 * individual sensors)
@@ -122,18 +145,22 @@ public class OffBoardSensorClient {
 	 * This function starts the sensor module from predefined module path.
 	 */
 	public void startSensor() {
+		// If not successfully initialized, return
+		if (!initialized) {
+			return;
+		}
 
 		// Create a Jedis pool if not exist
 		if (pool == null) {
-			pool = new JedisPool(new JedisPoolConfig(), this.hostName);
+			pool = new JedisPool(new JedisPoolConfig(),
+					OffBoardSensorClient.hostName);
 		}
 
 		// Create a Jedis pub/sub instance
 		jedis = pool.getResource();
 
 		// Run the subscription as a thread
-		redisThread = new RedisThread(this.getSensorName(),
-				this.getSensorChannel());
+		redisThread = new RedisThread(this.sensorName, this.sensorChannel);
 		redisThread.start();
 	}
 
@@ -141,40 +168,59 @@ public class OffBoardSensorClient {
 	 * This function stops the sensor module service.
 	 */
 	public void stopSensor() {
+		// If not successfully initialized, return
+		if (!initialized) {
+			return;
+		}
+
 		this.redisThread.stop();
 		jedis.disconnect();
 	}
 
-	private void initialize() throws JSONException {
+	/**
+	 * This function initializes the sensor client from the sensor name given in
+	 * constructor.
+	 * <p>
+	 * Basically, what this method does is to read from methods.json file and
+	 * configures the corresponding sensor channel, callback methods, etc.
+	 * 
+	 */
+	private void initialize() throws JSONException, IOException {
 
-		String jsonString = "{\"sensorName\":\"Activity\", \"sensorCh\":\"ACTIVITY_CH\", "
-				+ "\"methods\":["
-				+ "{\"message\":\"ActivityLow\", \"method\":\"OffBoardActivityLowDetected\"}, "
-				+ "{\"message\":\"ActivityHigh\", \"method\":\"OffBoardActivityHighDetected\"}"
-				+ "]}";
-		System.out.println(jsonString);
-		JSONObject jsonObject = new JSONObject(jsonString);
+		BufferedReader br = new BufferedReader(new FileReader("methods.json"));
+		String jsonString = br.readLine();
 
-		String _sensorName = jsonObject.getString("sensorName");
+		while (jsonString != null) {
 
-		if (_sensorName.compareToIgnoreCase(this.sensorName) == 0) {
-			// Initialize sensor channel
-			this.sensorChannel = jsonObject.getString("sensorCh");
+			JSONObject jsonObject = new JSONObject(jsonString);
 
-			// Initialize sensor method dictionary
-			JSONArray methodArr = jsonObject.getJSONArray("methods");
+			String _sensorName = jsonObject.getString("sensorName");
 
-			for (int i = 0; i < methodArr.length(); ++i) {
-				JSONObject tempObj = methodArr.getJSONObject(i);
-				String message = tempObj.getString("message");
-				String methodName = tempObj.getString("method");
+			// Sensor found
+			if (_sensorName.compareToIgnoreCase(this.sensorName) == 0) {
+				// Initialize sensor channel
+				this.sensorChannel = jsonObject.getString("sensorCh");
 
-				this.methodDict.put(message, methodName);
+				// Initialize sensor method dictionary
+				JSONArray methodArr = jsonObject.getJSONArray("methods");
+
+				for (int i = 0; i < methodArr.length(); ++i) {
+					JSONObject tempObj = methodArr.getJSONObject(i);
+					String message = tempObj.getString("message");
+					String methodName = tempObj.getString("method");
+
+					this.methodDict.put(message, methodName);
+				}
+
+				// Successfully initialized
+				this.initialized = true;
+
+				// Stop reading file
+				break;
 			}
+
+			jsonString = br.readLine();
 		}
-
-		System.out.println(this.methodDict);
-
 	}
 
 	/**

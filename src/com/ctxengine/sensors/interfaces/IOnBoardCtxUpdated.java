@@ -1,7 +1,5 @@
-package com.ctxengine.sensors;
+package com.ctxengine.sensors.interfaces;
 
-import com.ctxengine.sensors.onboard.ICameraCtxUpdated;
-import com.ctxengine.sensors.onboard.IIMUCtxUpdated;
 
 /**
  * This interface serves as the delegate for all on-board sensor contexts.

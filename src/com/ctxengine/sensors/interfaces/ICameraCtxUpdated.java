@@ -1,4 +1,4 @@
-package com.ctxengine.sensors.onboard;
+package com.ctxengine.sensors.interfaces;
 
 /**
  * This interface serves as the delegate to pass the camera sensor events to the

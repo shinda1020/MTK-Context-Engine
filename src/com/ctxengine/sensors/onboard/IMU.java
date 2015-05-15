@@ -2,6 +2,7 @@ package com.ctxengine.sensors.onboard;
 
 import com.ctxengine.ContextEngine;
 import com.ctxengine.sensors.OnBoardSensor;
+import com.ctxengine.sensors.interfaces.IIMUCtxUpdated;
 
 /**
  * This class is an IMU sensor class inherited from OnBoardSensor.

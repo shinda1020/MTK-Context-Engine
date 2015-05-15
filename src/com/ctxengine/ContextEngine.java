@@ -1,8 +1,7 @@
 package com.ctxengine;
 
-import com.ctxengine.sensors.ICtxUpdated;
 import com.ctxengine.sensors.OffBoardSensorClient;
-import com.ctxengine.sensors.offboard.ActivityClient;
+import com.ctxengine.sensors.interfaces.ICtxUpdated;
 import com.ctxengine.sensors.onboard.Camera;
 import com.ctxengine.sensors.onboard.IMU;
 
@@ -24,7 +23,6 @@ public class ContextEngine implements ICtxUpdated {
 	/******************************************************************
 	 * Off-board sensor
 	 ******************************************************************/
-	private static ActivityClient actSensor;
 
 	/**
 	 * Naive constructor
@@ -86,21 +84,15 @@ public class ContextEngine implements ICtxUpdated {
 	 * sensing service.
 	 */
 	public void startActivity() {
-//		if (actSensor == null) {
-//			actSensor = new ActivityClient(hostName, this);
-//			actSensor.startSensor();
-//		}
-		
 		OffBoardSensorClient act = new OffBoardSensorClient("Activity", this);
+		act.startSensor();
 	}
 
 	/**
 	 * This function terminates the activity sensing service.
 	 */
 	public void stopActivity() {
-		if (actSensor != null) {
-			actSensor.stopSensor();
-		}
+
 	}
 
 	/******************************************************************

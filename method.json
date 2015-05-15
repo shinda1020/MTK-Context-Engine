@@ -1,1 +1,0 @@
-{"sensorName":"Activity", "sensorCh":"ACTIVITY_CH", "methods":[{"message":"ActivityNone”, "method":"OffBoardActivityNoneDetected”}, {“message":"ActivityLow", "method":"OffBoardActivityLowDetected"}, {"message":"ActivityHigh", "method":"OffBoardActivityHighDetected"}]}
