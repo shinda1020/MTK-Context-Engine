@@ -1,25 +1,33 @@
-/**
- * 
- */
 package com.ctxengine.sensors;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+
+import com.ctxengine.ContextEngine;
+import com.ctxengine.sensors.offboard.IActivityCtxUpdated;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisPubSub;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+;
 /**
- * This class is an abstract class of all off-board sensor service wrappers that
- * run on board.
- * <p>
- * Basically, what this class does is to communicate with corresponding
- * off-broad sensor services through prescribed channels on Redis.
+ * 
  * 
  * @author Shinda
  * @version 1.0 05/12/2015
  */
 
-public abstract class OffBoardSensorClient {
+public class OffBoardSensorClient {
+
+	// The host where Redis server is running
+	private static String hostName;
 
 	/*
 	 * The private Redis thread instance that communicates with off-board
@@ -33,39 +41,77 @@ public abstract class OffBoardSensorClient {
 	/* The Jedis instance */
 	private Jedis jedis;
 
+	/* The name of sensor service */
+	private String sensorName;
+
+	/* The channel of sensor service */
+	private String sensorChannel;
+
+	/* The method dictionary mapping to sensor messages */
+	HashMap<String, String> methodDict = new HashMap<String, String>();
+
+	/*
+	 * The interface to which the off-board sensor client passes events for
+	 * actual handling
+	 */
+	private IOffBoardCtxUpdated ctxInterface = null;
+
 	/******************************************************************
-	 * Abstract methods
+	 * Constructor and Setters & Getters
 	 ******************************************************************/
 
-	/**
-	 * This abstract function defines the name of the sensor thread.
-	 * 
-	 * @return The name of the sensor thread.
-	 */
-	protected abstract String getSensorThreadName();
+	public OffBoardSensorClient(String _sensorName,
+			IOffBoardCtxUpdated _ctxInterface) {
+		this.sensorName = _sensorName;
+		this.ctxInterface = _ctxInterface;
 
-	/**
-	 * This abstract function defines the channel that this sensor subscribes
-	 * to, e.g., ACTIVITY_CH.
-	 * 
-	 * @return the channel that this sensor subscribes.
-	 */
-	protected abstract String getSensorChannelFromRedis();
+		// Initialize this sensor client based on the sensor name given.
+		try {
+			this.initialize();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
 
-	/**
-	 * This abstract function defines host name of the Redis server.
-	 * 
-	 * @return the host name of the Redis server
-	 */
-	protected abstract String getHostName();
+	public String getSensorName() {
+		return sensorName;
+	}
 
-	/**
-	 * Override this function to handle off-board sensor messages.
-	 * 
-	 * @param msg
-	 *            host name of the Redis server
-	 */
-	protected abstract void msgReceivedFromRedis(String msg);
+	public void setSensorName(String sensorName) {
+		this.sensorName = sensorName;
+	}
+
+	public HashMap<String, String> getMethodDict() {
+		return methodDict;
+	}
+
+	public void setMethodDict(HashMap<String, String> methodDict) {
+		this.methodDict = methodDict;
+	}
+
+	public IOffBoardCtxUpdated getCtxInterface() {
+		return ctxInterface;
+	}
+
+	public void setCtxInterface(IOffBoardCtxUpdated ctxInterface) {
+		this.ctxInterface = ctxInterface;
+	}
+
+	public String getSensorChannel() {
+		return sensorChannel;
+	}
+
+	public void setSensorChannel(String sensorChannel) {
+		this.sensorChannel = sensorChannel;
+	}
+
+	public static String getHostName() {
+		return hostName;
+	}
+
+	public static void setHostName(String hostName) {
+		OffBoardSensorClient.hostName = hostName;
+	}
 
 	/******************************************************************
 	 * Global implementation of sensor services (No need to change for
@@ -76,16 +122,18 @@ public abstract class OffBoardSensorClient {
 	 * This function starts the sensor module from predefined module path.
 	 */
 	public void startSensor() {
+
 		// Create a Jedis pool if not exist
 		if (pool == null) {
-			pool = new JedisPool(new JedisPoolConfig(), this.getHostName());
+			pool = new JedisPool(new JedisPoolConfig(), this.hostName);
 		}
 
 		// Create a Jedis pub/sub instance
 		jedis = pool.getResource();
 
 		// Run the subscription as a thread
-		redisThread = new RedisThread(this.getSensorThreadName());
+		redisThread = new RedisThread(this.getSensorName(),
+				this.getSensorChannel());
 		redisThread.start();
 	}
 
@@ -95,6 +143,73 @@ public abstract class OffBoardSensorClient {
 	public void stopSensor() {
 		this.redisThread.stop();
 		jedis.disconnect();
+	}
+
+	private void initialize() throws JSONException {
+
+		String jsonString = "{\"sensorName\":\"Activity\", \"sensorCh\":\"ACTIVITY_CH\", "
+				+ "\"methods\":["
+				+ "{\"message\":\"ActivityLow\", \"method\":\"OffBoardActivityLowDetected\"}, "
+				+ "{\"message\":\"ActivityHigh\", \"method\":\"OffBoardActivityHighDetected\"}"
+				+ "]}";
+		System.out.println(jsonString);
+		JSONObject jsonObject = new JSONObject(jsonString);
+
+		String _sensorName = jsonObject.getString("sensorName");
+
+		if (_sensorName.compareToIgnoreCase(this.sensorName) == 0) {
+			// Initialize sensor channel
+			this.sensorChannel = jsonObject.getString("sensorCh");
+
+			// Initialize sensor method dictionary
+			JSONArray methodArr = jsonObject.getJSONArray("methods");
+
+			for (int i = 0; i < methodArr.length(); ++i) {
+				JSONObject tempObj = methodArr.getJSONObject(i);
+				String message = tempObj.getString("message");
+				String methodName = tempObj.getString("method");
+
+				this.methodDict.put(message, methodName);
+			}
+		}
+
+		System.out.println(this.methodDict);
+
+	}
+
+	/**
+	 * Override this function to handle off-board sensor messages.
+	 * 
+	 * @param msg
+	 *            host name of the Redis server
+	 */
+	protected void msgReceivedFromRedis(String msg) {
+
+		String methodName = methodDict.get(msg);
+
+		if (methodName == null) {
+			return;
+		}
+
+		try {
+			Method method = ctxInterface.getClass().getMethod(methodName,
+					new Class[] {});
+
+			if (method != null) {
+				method.invoke(ctxInterface, new Object[] {});
+			}
+
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -113,14 +228,18 @@ public abstract class OffBoardSensorClient {
 		/* The thread name */
 		private String threadName;
 
+		/* The redis channel */
+		private String redisChannel;
+
 		/**
 		 * The constructor
 		 * 
 		 * @param _threadName
 		 *            The thread name
 		 */
-		RedisThread(String _threadName) {
+		RedisThread(String _threadName, String _redisChannel) {
 			this.threadName = _threadName;
+			this.redisChannel = _redisChannel;
 		}
 
 		/**
@@ -128,7 +247,7 @@ public abstract class OffBoardSensorClient {
 		 * channel.
 		 */
 		public void run() {
-			jedis.subscribe(this, getSensorChannelFromRedis());
+			jedis.subscribe(this, redisChannel);
 		}
 
 		/**
@@ -147,6 +266,7 @@ public abstract class OffBoardSensorClient {
 		 */
 		public void stop() {
 			if (t != null) {
+				this.unsubscribe();
 				t.interrupt();
 				t = null;
 			}
@@ -160,7 +280,7 @@ public abstract class OffBoardSensorClient {
 		public void onMessage(String channel, String msg) {
 			// Make sure the command comes from the channel that this sensor
 			// subscribes to.
-			if (channel.compareToIgnoreCase(getSensorChannelFromRedis()) == 0) {
+			if (channel.compareToIgnoreCase(this.redisChannel) == 0) {
 				msgReceivedFromRedis(msg);
 			}
 		}

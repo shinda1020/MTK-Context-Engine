@@ -1,6 +1,7 @@
 package com.ctxengine;
 
 import com.ctxengine.sensors.ICtxUpdated;
+import com.ctxengine.sensors.OffBoardSensorClient;
 import com.ctxengine.sensors.offboard.ActivityClient;
 import com.ctxengine.sensors.onboard.Camera;
 import com.ctxengine.sensors.onboard.IMU;
@@ -11,6 +12,7 @@ import com.ctxengine.sensors.onboard.IMU;
  */
 public class ContextEngine implements ICtxUpdated {
 
+	// The host where Redis server is running
 	String hostName = "localhost";
 
 	/******************************************************************
@@ -28,7 +30,7 @@ public class ContextEngine implements ICtxUpdated {
 	 * Naive constructor
 	 */
 	public ContextEngine() {
-
+		OffBoardSensorClient.setHostName(hostName);
 	}
 
 	/******************************************************************
@@ -84,10 +86,12 @@ public class ContextEngine implements ICtxUpdated {
 	 * sensing service.
 	 */
 	public void startActivity() {
-		if (actSensor == null) {
-			actSensor = new ActivityClient(hostName, this);
-			actSensor.startSensor();
-		}
+//		if (actSensor == null) {
+//			actSensor = new ActivityClient(hostName, this);
+//			actSensor.startSensor();
+//		}
+		
+		OffBoardSensorClient act = new OffBoardSensorClient("Activity", this);
 	}
 
 	/**

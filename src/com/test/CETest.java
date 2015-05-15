@@ -1,4 +1,4 @@
-package com;
+package com.test;
 
 import java.util.Scanner;
 import com.ctxengine.ContextEngine;

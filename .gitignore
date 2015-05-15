@@ -1,3 +1,6 @@
+# Ignore external library
+/lib/
+
 # Ignore backup files
 *~
 

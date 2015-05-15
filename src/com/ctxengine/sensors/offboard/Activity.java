@@ -42,7 +42,6 @@ public final class Activity extends OffBoardSensor {
 	 */
 	@Override
 	protected void handleSensorMsg(String msg) {
-		System.out.println(msg);
 		// No activity detected
 		if (msg.compareToIgnoreCase("none") == 0) {
 			this.pubContext("none");

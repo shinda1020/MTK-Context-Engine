@@ -3,14 +3,21 @@
  */
 package com.ctxengine.sensors.offboard;
 
-import com.ctxengine.sensors.OffBoardSensorClient;
+import com.ctxengine.sensors.IOffBoardCtxUpdated;
+import com.ctxengine.sensors.OffBoardSensorClient_Backup;
 
 /**
  * @author shinda
  * 
  */
-public class ActivityClient extends OffBoardSensorClient implements
+public class ActivityClient extends OffBoardSensorClient_Backup implements
 		IActivityCtxUpdated {
+
+	public ActivityClient(String _hostName, IOffBoardCtxUpdated _ctxInterface) {
+		super(_hostName, _ctxInterface);
+		this.hostName = _hostName;
+		// TODO Auto-generated constructor stub
+	}
 
 	/* The name of the sensor thread */
 	final private String SENSOR_THREAD_NAME = "Activity";
@@ -30,10 +37,10 @@ public class ActivityClient extends OffBoardSensorClient implements
 	/**
 	 * 
 	 */
-	public ActivityClient(String _hostName, IActivityCtxUpdated _ctxInterface) {
-		this.hostName = _hostName;
-		this.ctxInterface = _ctxInterface;
-	}
+//	public ActivityClient(String _hostName, IActivityCtxUpdated _ctxInterface) {
+//		this.hostName = _hostName;
+//		this.ctxInterface = _ctxInterface;
+//	}
 
 	/******************************************************************
 	 * Implementation of abstract methods
