@@ -183,12 +183,17 @@ public class ContextEngine implements ICtxUpdated {
 
 		// Stop the sensor
 		sensor.stopSensor();
+
+		// Remove the sensor from the list
+		sensorClients.remove(sensor);
 	}
 
 	/**
 	 * This function queries the sensor client list and finds the sensor client
 	 * giving the sensor name.
 	 * 
+	 * @param _sensorName
+	 *            the name of the sensor
 	 * @return The off-board sensor client regarding the given sensor name, if
 	 *         any.
 	 */

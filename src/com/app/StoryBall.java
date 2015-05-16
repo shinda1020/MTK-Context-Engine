@@ -13,7 +13,8 @@ public class StoryBall extends MemoryApp {
 	public void start() {
 		// Very important, must start with super.start()!
 		super.start();
-		ctxEngine.startOffBoardSensor("Speech");
+//		ctxEngine.startOffBoardSensor("Speech");
+		ctxEngine.startIMU();
 	}
 
 	@Override
