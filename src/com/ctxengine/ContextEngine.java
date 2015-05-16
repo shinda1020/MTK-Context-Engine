@@ -32,10 +32,10 @@ import com.ctxengine.sensors.onboard.IMU;
 public class ContextEngine implements ICtxUpdated {
 
 	/* The host where Redis server is running */
-	String hostName = "localhost";
+	private String hostName;
 
 	/* The path where methods.json file locates */
-	String methodFile = "methods.json";
+	private String methodFilePath;
 
 	/******************************************************************
 	 * On-board sensors
@@ -60,11 +60,15 @@ public class ContextEngine implements ICtxUpdated {
 	/**
 	 * Naive constructor
 	 */
-	public ContextEngine(ICtxUpdated _ctxInterface) {
+	public ContextEngine(String _hostName, String _methodFile,
+			ICtxUpdated _ctxInterface) {
+		this.hostName = _hostName;
+		this.methodFilePath = _methodFile;
+		this.ctxInterface = _ctxInterface;
+
 		// Set static variables
 		OffBoardSensorClient.setHostName(hostName);
-		OffBoardSensorClient.setMethodFile(methodFile);
-		this.ctxInterface = _ctxInterface;
+		OffBoardSensorClient.setMethodFile(methodFilePath);
 	}
 
 	public String getHostName() {
@@ -75,12 +79,12 @@ public class ContextEngine implements ICtxUpdated {
 		this.hostName = hostName;
 	}
 
-	public String getMethodFile() {
-		return methodFile;
+	public String getMethodFilePath() {
+		return methodFilePath;
 	}
 
-	public void setMethodFile(String methodFile) {
-		this.methodFile = methodFile;
+	public void setMethodFilePath(String methodFilePath) {
+		this.methodFilePath = methodFilePath;
 	}
 
 	/******************************************************************

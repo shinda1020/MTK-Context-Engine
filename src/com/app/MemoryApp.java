@@ -20,12 +20,36 @@ public abstract class MemoryApp implements ICtxUpdated {
 	protected ContextEngine ctxEngine;
 
 	/**
-	 * Constructor. This constructor simply instantiates its own context engine.
+	 * Constructor
 	 * 
 	 */
 	public MemoryApp() {
-		ctxEngine = new ContextEngine(this);
+
 	}
+
+	/**
+	 * The start method for applications. Must be override! And the first line
+	 * of the overridden method must start with the line "super.start()".
+	 * <p>
+	 * The super methods simply instantiates its own context engine.
+	 */
+	public void start() {
+		ctxEngine = new ContextEngine(getHostName(), getMethodFilePath(), this);
+	}
+
+	/******************************************************************
+	 * Abstract methods
+	 ******************************************************************/
+
+	/**
+	 * This abstract defines the host name of the Redis server.
+	 */
+	protected abstract String getHostName();
+
+	/**
+	 * This abstract defines the path of the methods.json file.
+	 */
+	protected abstract String getMethodFilePath();
 
 	/******************************************************************
 	 * ICtxUpdated implementation

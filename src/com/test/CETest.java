@@ -14,7 +14,7 @@ public class CETest {
 	public static void main(String[] args) {
 
 		StoryBall sb = new StoryBall();
-
+		sb.start();
 	}
 
 }
