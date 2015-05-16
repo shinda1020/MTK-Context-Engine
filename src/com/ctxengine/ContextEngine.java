@@ -194,8 +194,8 @@ public class ContextEngine implements ICtxUpdated {
 	 ******************************************************************/
 
 	/**
-	 * This function passes the none activity event when no activity is detected
-	 * from depth sensor.
+	 * This function passes the none activity event when it is detected from
+	 * depth sensor.
 	 */
 	@Override
 	public void OffBoardActivityNoneDetected() {
@@ -203,8 +203,8 @@ public class ContextEngine implements ICtxUpdated {
 	}
 
 	/**
-	 * This function passes the low activity event when low activity is detected
-	 * from depth sensor.
+	 * This function passes the low activity event when it is detected from
+	 * depth sensor.
 	 */
 	@Override
 	public void OffBoardActivityLowDetected() {
@@ -212,12 +212,43 @@ public class ContextEngine implements ICtxUpdated {
 	}
 
 	/**
-	 * This function passes the high activity event when high activity is
-	 * detected from depth sensor.
+	 * This function passes the high speech activity event when it is detected
+	 * from depth sensor.
 	 */
 	@Override
 	public void OffBoardActivityHighDetected() {
 		ctxInterface.OffBoardActivityHighDetected();
+	}
+
+	/******************************************************************
+	 * ISpeechCtxUpdated interface handling
+	 ******************************************************************/
+
+	/**
+	 * This function passes the none speech activity event when it is detected
+	 * from microphone.
+	 */
+	@Override
+	public void OffBoardSpeechNoneDetected() {
+		ctxInterface.OffBoardSpeechNoneDetected();
+	}
+
+	/**
+	 * This function passes the low speech activity event when it is detected
+	 * from microphone.
+	 */
+	@Override
+	public void OffBoardSpeechLowDetected() {
+		ctxInterface.OffBoardSpeechLowDetected();
+	}
+
+	/**
+	 * This function passes the high speech activity event when it is detected
+	 * from microphone.
+	 */
+	@Override
+	public void OffBoardSpeechHighDetected() {
+		ctxInterface.OffBoardSpeechHighDetected();
 	}
 
 }
