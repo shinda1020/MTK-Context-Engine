@@ -1,7 +1,7 @@
 # MTK-Context-Engine
-Context engine for memory toolkit. Written in Java
 
+Context engine for memory toolkit. Written in Java, C/C++, and Python.
 
-Run "sudo adduser pi i2c" to add user to I2C group to run IMU
+# To-do
 
-Default redis password is "foobared". When using redis-cli, type "AUTH foobared" to gain access.
+Add detailed documentation to each package.
