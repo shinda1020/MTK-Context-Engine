@@ -18,7 +18,6 @@ import org.json.JSONObject;
 
 import com.ctxengine.sensors.offboard.IOffBoardCtxUpdated;
 
-;
 /**
  * This class is an off-board sensor service wrappers that run on board.
  * <p>

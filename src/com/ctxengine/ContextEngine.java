@@ -11,9 +11,24 @@ import com.ctxengine.sensors.onboard.Camera;
 import com.ctxengine.sensors.onboard.IMU;
 
 /**
- * @author shinda
+ * This class is the context engine in an application.
+ * <p>
+ * The context engine is responsible for the following things:
+ * <p>
+ * Sensor monitor: This context engine starts/stops and monitors both the on and
+ * off-board sensor modules. For on-board sensors, the context engine
+ * instantiates corresponding sensor wrappers and monitors their states. For
+ * each off-board sensor, the context engine creates a Redis client thread and
+ * receives events from Redis server via Pub/Sub.
+ * <p>
+ * Event passing: The context engine passes the sensor events to a particular
+ * app via Java interface. The concrete event-handling is implemented in
+ * specific apps.
  * 
+ * @author Shinda
+ * @version 1.0 05/15/2015
  */
+
 public class ContextEngine implements ICtxUpdated {
 
 	/* The host where Redis server is running */
