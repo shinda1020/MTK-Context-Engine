@@ -1,3 +1,6 @@
+# Ignore class path
+.classpath
+
 # Ignore external library
 /lib/
 
