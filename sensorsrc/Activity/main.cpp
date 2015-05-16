@@ -63,11 +63,11 @@ String curState = "";
 void countActivity()
 {
     if (totalContour < 50000) {
-        curState = "none";
+        curState = "ActivityNone";
     } else if (totalContour >= 50000 && totalContour < 300000) {
-        curState = "low";
+        curState = "ActivityLow";
     } else if (totalContour >= 300000) {
-        curState = "high";
+        curState = "ActivityHigh";
     }
     
     if (prevState.compare(curState) != 0) {

@@ -36,8 +36,11 @@ import com.ctxengine.sensors.interfaces.IOffBoardCtxUpdated;
 
 public class OffBoardSensorClient {
 
-	// The host where Redis server is running
+	/* The host where Redis server is running */
 	private static String hostName;
+
+	/* The path where methods.json file locates */
+	private static String methodFile;
 
 	/*
 	 * The private Redis thread instance that communicates with off-board
@@ -77,19 +80,24 @@ public class OffBoardSensorClient {
 	 * Constructor and Setters & Getters
 	 ******************************************************************/
 
+	/**
+	 * The constructor.
+	 * 
+	 * @param _sensorName
+	 *            the name of the sensor service.
+	 * @param _ctxInterface
+	 *            the interface that handles the sensor events.
+	 * @throws JSONException
+	 * @throws IOException
+	 */
 	public OffBoardSensorClient(String _sensorName,
-			IOffBoardCtxUpdated _ctxInterface) {
+			IOffBoardCtxUpdated _ctxInterface) throws JSONException,
+			IOException {
 		this.sensorName = _sensorName;
 		this.ctxInterface = _ctxInterface;
 
 		// Initialize this sensor client based on the sensor name given.
-		try {
-			this.initialize();
-		} catch (JSONException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		this.initialize();
 	}
 
 	public String getSensorName() {
@@ -132,6 +140,14 @@ public class OffBoardSensorClient {
 		OffBoardSensorClient.hostName = hostName;
 	}
 
+	public static String getMethodFile() {
+		return methodFile;
+	}
+
+	public static void setMethodFile(String methodFile) {
+		OffBoardSensorClient.methodFile = methodFile;
+	}
+
 	public boolean isInitialized() {
 		return initialized;
 	}
@@ -160,8 +176,10 @@ public class OffBoardSensorClient {
 		jedis = pool.getResource();
 
 		// Run the subscription as a thread
-		redisThread = new RedisThread(this.sensorName, this.sensorChannel);
-		redisThread.start();
+		if (redisThread == null) {
+			redisThread = new RedisThread(this.sensorName, this.sensorChannel);
+			redisThread.start();
+		}
 	}
 
 	/**
@@ -173,8 +191,9 @@ public class OffBoardSensorClient {
 			return;
 		}
 
-		this.redisThread.stop();
+		redisThread.stop();
 		jedis.disconnect();
+		redisThread = null;
 	}
 
 	/**
@@ -187,7 +206,8 @@ public class OffBoardSensorClient {
 	 */
 	private void initialize() throws JSONException, IOException {
 
-		BufferedReader br = new BufferedReader(new FileReader("methods.json"));
+		BufferedReader br = new BufferedReader(new FileReader(
+				OffBoardSensorClient.getMethodFile()));
 		String jsonString = br.readLine();
 
 		while (jsonString != null) {

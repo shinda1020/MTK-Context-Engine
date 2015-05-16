@@ -25,14 +25,14 @@ public class OnBoardTest {
 	 */
 	public static void main(String[] args) {
 		ContextEngine ce = new ContextEngine();
-		ce.startActivity();
+		ce.startOffBoardSensor("Activity");
 		// ce.startIMU();
 		// ce.startCamera();
 
 		Scanner s = new Scanner(System.in);
 		if (s.nextLine() != null) {
 			System.out.println("New line");
-//			ce.stopActivity();
+			ce.stopOffBoardSensor("Activity");
 			// ce.stopIMU();
 			// ce.stopCamera();
 		}
