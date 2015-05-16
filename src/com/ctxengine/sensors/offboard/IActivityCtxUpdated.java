@@ -1,4 +1,4 @@
-package com.ctxengine.sensors.interfaces;
+package com.ctxengine.sensors.offboard;
 
 /**
  * This interface serves as the delegate to pass the activity sensor events to

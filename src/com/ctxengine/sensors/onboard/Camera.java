@@ -1,7 +1,6 @@
 package com.ctxengine.sensors.onboard;
 
 import com.ctxengine.sensors.OnBoardSensor;
-import com.ctxengine.sensors.interfaces.ICameraCtxUpdated;
 
 /**
  * This class is a camera sensor class inherited from OnBoardSensor.

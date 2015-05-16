@@ -5,8 +5,8 @@ import java.util.LinkedList;
 
 import org.json.JSONException;
 
+import com.ctxengine.sensors.ICtxUpdated;
 import com.ctxengine.sensors.OffBoardSensorClient;
-import com.ctxengine.sensors.interfaces.ICtxUpdated;
 import com.ctxengine.sensors.onboard.Camera;
 import com.ctxengine.sensors.onboard.IMU;
 
@@ -23,23 +23,29 @@ public class ContextEngine implements ICtxUpdated {
 	String methodFile = "methods.json";
 
 	/******************************************************************
-	 * On-board sensor
+	 * On-board sensors
 	 ******************************************************************/
 	private static IMU imuSensor;
 	private static Camera camSensor;
 
 	/******************************************************************
-	 * Off-board sensor
+	 * Off-board sensors
 	 ******************************************************************/
 	private static LinkedList<OffBoardSensorClient> sensorClients = new LinkedList<OffBoardSensorClient>();
+
+	/******************************************************************
+	 * Interface that handles sensor events
+	 ******************************************************************/
+	private ICtxUpdated ctxInterface = null;
 
 	/**
 	 * Naive constructor
 	 */
-	public ContextEngine() {
+	public ContextEngine(ICtxUpdated _ctxInterface) {
 		// Set static variables
 		OffBoardSensorClient.setHostName(hostName);
 		OffBoardSensorClient.setMethodFile(methodFile);
+		this.ctxInterface = _ctxInterface;
 	}
 
 	/******************************************************************
@@ -124,6 +130,8 @@ public class ContextEngine implements ICtxUpdated {
 	}
 
 	/**
+	 * This function stops receiving messages from off-board sensor giving the
+	 * sensor name.
 	 * 
 	 */
 	public void stopOffBoardSensor(String _sensorName) {
@@ -160,12 +168,12 @@ public class ContextEngine implements ICtxUpdated {
 	 ******************************************************************/
 
 	/**
-	 * This function handles the shaken event when a shake is detected from IMU
+	 * This function passes the shaken event when a shake is detected from IMU
 	 * module.
 	 */
 	@Override
 	public void OnBoardIMUShakeDetected() {
-		System.out.println("Shake detected");
+		ctxInterface.OnBoardIMUShakeDetected();
 	}
 
 	/******************************************************************
@@ -173,12 +181,12 @@ public class ContextEngine implements ICtxUpdated {
 	 ******************************************************************/
 
 	/**
-	 * This function handles the face detected event when a face is detected
-	 * from camera module.
+	 * This function passes the face detected event when a face is detected from
+	 * camera module.
 	 */
 	@Override
 	public void OnBoardCameraFaceDetected() {
-		System.out.println("Face detected");
+		ctxInterface.OnBoardCameraFaceDetected();
 	}
 
 	/******************************************************************
@@ -186,27 +194,30 @@ public class ContextEngine implements ICtxUpdated {
 	 ******************************************************************/
 
 	/**
-	 * Implement this function to handle none-activity event.
+	 * This function passes the none activity event when no activity is detected
+	 * from depth sensor.
 	 */
 	@Override
 	public void OffBoardActivityNoneDetected() {
-		System.out.println("None");
+		ctxInterface.OffBoardActivityNoneDetected();
 	}
 
 	/**
-	 * Implement this function to handle low-activity event.
+	 * This function passes the low activity event when low activity is detected
+	 * from depth sensor.
 	 */
 	@Override
 	public void OffBoardActivityLowDetected() {
-		System.out.println("Low");
+		ctxInterface.OffBoardActivityLowDetected();
 	}
 
 	/**
-	 * Implement this function to handle high-activity event.
+	 * This function passes the high activity event when high activity is
+	 * detected from depth sensor.
 	 */
 	@Override
 	public void OffBoardActivityHighDetected() {
-		System.out.println("High");
+		ctxInterface.OffBoardActivityHighDetected();
 	}
 
 }

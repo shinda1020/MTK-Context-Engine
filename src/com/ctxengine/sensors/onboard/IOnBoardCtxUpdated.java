@@ -1,4 +1,4 @@
-package com.ctxengine.sensors.interfaces;
+package com.ctxengine.sensors.onboard;
 
 
 /**

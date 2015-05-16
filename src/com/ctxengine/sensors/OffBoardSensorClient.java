@@ -16,7 +16,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.ctxengine.sensors.interfaces.IOffBoardCtxUpdated;
+import com.ctxengine.sensors.offboard.IOffBoardCtxUpdated;
 
 ;
 /**

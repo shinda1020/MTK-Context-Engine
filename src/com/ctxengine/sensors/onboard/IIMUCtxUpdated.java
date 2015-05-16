@@ -1,4 +1,4 @@
-package com.ctxengine.sensors.interfaces;
+package com.ctxengine.sensors.onboard;
 
 /**
  * This interface serves as the delegate to pass IMU sensor events to the
