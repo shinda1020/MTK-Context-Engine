@@ -240,6 +240,8 @@ public class OffBoardSensorClient {
 
 			jsonString = br.readLine();
 		}
+
+		br.close();
 	}
 
 	/**

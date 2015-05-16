@@ -2,7 +2,7 @@ package com.app;
 
 public class StoryBall extends MemoryApp {
 
-	private String hostName = "192.168.2.1";
+	private String hostName = "localhost";
 	private String methodFilePath = "methods.json";
 
 	public StoryBall() {

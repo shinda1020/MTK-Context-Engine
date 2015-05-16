@@ -1,6 +1,5 @@
 package com.ctxengine.sensors.onboard;
 
-import com.ctxengine.ContextEngine;
 import com.ctxengine.sensors.OnBoardSensor;
 
 /**
