@@ -4,22 +4,12 @@ public class StoryBall extends MemoryApp {
 
 	public StoryBall() {
 		super();
-		ctxEngine.startOffBoardSensor("Speech");
+		ctxEngine.startIMU();
 	}
 
 	@Override
-	public void OffBoardSpeechNoneDetected() {
-		System.out.println("none");
-	}
-
-	@Override
-	public void OffBoardSpeechLowDetected() {
-		System.out.println("low");
-	}
-
-	@Override
-	public void OffBoardSpeechHighDetected() {
-		System.out.println("high");
+	public void OnBoardIMUShakeDetected() {
+		System.out.println("Shaked");
 	}
 
 }

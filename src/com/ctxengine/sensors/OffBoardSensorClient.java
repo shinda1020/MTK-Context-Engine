@@ -76,7 +76,7 @@ public class OffBoardSensorClient {
 	private IOffBoardCtxUpdated ctxInterface = null;
 
 	/******************************************************************
-	 * Constructor and Setters & Getters
+	 * Constructor, Setters & Getters
 	 ******************************************************************/
 
 	/**

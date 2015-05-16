@@ -53,6 +53,10 @@ public class ContextEngine implements ICtxUpdated {
 	 ******************************************************************/
 	private ICtxUpdated ctxInterface = null;
 
+	/******************************************************************
+	 * Constructor, Setters & Getters
+	 ******************************************************************/
+
 	/**
 	 * Naive constructor
 	 */
@@ -61,6 +65,22 @@ public class ContextEngine implements ICtxUpdated {
 		OffBoardSensorClient.setHostName(hostName);
 		OffBoardSensorClient.setMethodFile(methodFile);
 		this.ctxInterface = _ctxInterface;
+	}
+
+	public String getHostName() {
+		return hostName;
+	}
+
+	public void setHostName(String hostName) {
+		this.hostName = hostName;
+	}
+
+	public String getMethodFile() {
+		return methodFile;
+	}
+
+	public void setMethodFile(String methodFile) {
+		this.methodFile = methodFile;
 	}
 
 	/******************************************************************

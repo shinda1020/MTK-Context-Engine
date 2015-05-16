@@ -4,11 +4,19 @@ import com.ctxengine.ContextEngine;
 import com.ctxengine.sensors.ICtxUpdated;
 
 /**
- * @author shinda
+ * This class is the application prototype.
+ * <p>
+ * To build applications on top of this class, firstly create a class that
+ * extends the MemoryApp class. Then, for the interested context types, override
+ * the event methods defined in ICtxUpdated interface.
  * 
+ * @author Shinda
+ * @version 1.0 05/15/2015
  */
-public class MemoryApp implements ICtxUpdated {
 
+public abstract class MemoryApp implements ICtxUpdated {
+
+	/* The context engine for this app */
 	protected ContextEngine ctxEngine;
 
 	/**
@@ -25,7 +33,7 @@ public class MemoryApp implements ICtxUpdated {
 
 	/**
 	 * Below are all the methods declared in the ICtxUpdated interface. Right
-	 * now these are naive implementations of these methods, which do nothing.
+	 * now this naive of these methods, which does nothing.
 	 * <p>
 	 * To build an application, create a new class that extends to this class,
 	 * i.e., MemoryApp. Then simply override the context events that are of
