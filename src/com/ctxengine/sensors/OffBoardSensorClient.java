@@ -245,10 +245,13 @@ public class OffBoardSensorClient {
 	}
 
 	/**
-	 * Override this function to handle off-board sensor messages.
+	 * This method leverages Java Reflection to call corresponding methods 
+	 * regarding the message received. The method first queries the method
+	 * hashmap to find if such message is prescribed. If so, this method
+	 * finds the mapped method name and calls it via Java Reflection.
 	 * 
 	 * @param msg
-	 *            host name of the Redis server
+	 *            the message received from corresponding Redis channel.
 	 */
 	protected void msgReceivedFromRedis(String msg) {
 
