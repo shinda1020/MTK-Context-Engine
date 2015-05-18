@@ -57,7 +57,8 @@ public abstract class MemoryApp implements ICtxUpdated {
 
 	/**
 	 * Below are all the methods declared in the ICtxUpdated interface. Right
-	 * now this naive of these methods, which does nothing.
+	 * now this is the naive implementation of these methods, which does
+	 * nothing.
 	 * <p>
 	 * To build an application, create a new class that extends to this class,
 	 * i.e., MemoryApp. Then simply override the context events that are of
