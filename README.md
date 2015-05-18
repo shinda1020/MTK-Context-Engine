@@ -1,6 +1,6 @@
-# MTK-Context-Engine
+# Memory Toolkit
 
-Context engine for memory toolkit. Written in Java, C/C++, and Python.
+A memory-related application framework. Written in Java, C/C++, and Python.
 
 # To-do
 
