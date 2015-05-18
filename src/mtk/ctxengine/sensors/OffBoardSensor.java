@@ -78,7 +78,7 @@ public abstract class OffBoardSensor extends JedisPubSub {
 	 * 
 	 * @return the channel that this sensor subscribes.
 	 */
-	protected abstract String getSensorChannelFromRedis();
+	protected abstract String getSensorChannelOnRedis();
 
 	/**
 	 * This abstract function defines the name of the sensor thread.
@@ -115,7 +115,7 @@ public abstract class OffBoardSensor extends JedisPubSub {
 	 *            The context string
 	 */
 	protected final void pubContext(String ctx) {
-		jedis.publish(this.getSensorChannelFromRedis(), ctx);
+		jedis.publish(this.getSensorChannelOnRedis(), ctx);
 	}
 
 	/******************************************************************

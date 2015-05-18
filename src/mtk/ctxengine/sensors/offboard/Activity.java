@@ -83,7 +83,7 @@ public final class Activity extends OffBoardSensor {
 	 * @return the channel that this sensor subscribes.
 	 */
 	@Override
-	protected String getSensorChannelFromRedis() {
+	protected String getSensorChannelOnRedis() {
 		return this.REDIS_SENSOR_CH;
 	}
 
