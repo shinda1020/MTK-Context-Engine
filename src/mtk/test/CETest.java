@@ -1,6 +1,6 @@
-package com.test;
+package mtk.test;
 
-import com.app.*;
+import mtk.app.*;
 
 /**
  * @author shinda

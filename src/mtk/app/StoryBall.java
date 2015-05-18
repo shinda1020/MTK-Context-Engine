@@ -1,4 +1,4 @@
-package com.app;
+package mtk.app;
 
 public class StoryBall extends MemoryApp {
 

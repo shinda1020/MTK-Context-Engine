@@ -1,4 +1,4 @@
-package com.ctxengine.sensors;
+package mtk.ctxengine.sensors;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -11,12 +11,11 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisPubSub;
+import mtk.ctxengine.sensors.offboard.IOffBoardCtxUpdated;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.ctxengine.sensors.offboard.IOffBoardCtxUpdated;
 
 /**
  * This class is an off-board sensor service wrappers that run on board.

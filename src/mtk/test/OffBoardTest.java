@@ -1,11 +1,11 @@
 /**
  * 
  */
-package com.test;
+package mtk.test;
 
 import java.util.Scanner;
 
-import com.ctxengine.sensors.offboard.Activity;
+import mtk.ctxengine.sensors.offboard.Activity;
 
 /**
  * @author shinda

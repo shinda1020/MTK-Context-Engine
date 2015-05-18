@@ -1,7 +1,7 @@
-package com.app;
+package mtk.app;
 
-import com.ctxengine.ContextEngine;
-import com.ctxengine.sensors.ICtxUpdated;
+import mtk.ctxengine.ContextEngine;
+import mtk.ctxengine.sensors.ICtxUpdated;
 
 /**
  * This class is the application prototype.

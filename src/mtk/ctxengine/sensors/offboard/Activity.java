@@ -1,6 +1,6 @@
-package com.ctxengine.sensors.offboard;
+package mtk.ctxengine.sensors.offboard;
 
-import com.ctxengine.sensors.OffBoardSensor;
+import mtk.ctxengine.sensors.OffBoardSensor;
 
 /**
  * This class is a camera sensor class inherited from OnBoardSensor.

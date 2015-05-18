@@ -1,14 +1,14 @@
-package com.ctxengine;
+package mtk.ctxengine;
 
 import java.io.IOException;
 import java.util.LinkedList;
 
-import org.json.JSONException;
+import mtk.ctxengine.sensors.ICtxUpdated;
+import mtk.ctxengine.sensors.OffBoardSensorClient;
+import mtk.ctxengine.sensors.onboard.Camera;
+import mtk.ctxengine.sensors.onboard.IMU;
 
-import com.ctxengine.sensors.ICtxUpdated;
-import com.ctxengine.sensors.OffBoardSensorClient;
-import com.ctxengine.sensors.onboard.Camera;
-import com.ctxengine.sensors.onboard.IMU;
+import org.json.JSONException;
 
 /**
  * This class is the context engine in an application.

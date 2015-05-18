@@ -1,38 +1,38 @@
-package com.ctxengine.sensors.onboard;
+package mtk.ctxengine.sensors.onboard;
 
-import com.ctxengine.sensors.OnBoardSensor;
+import mtk.ctxengine.sensors.OnBoardSensor;
 
 /**
- * This class is a camera sensor class inherited from OnBoardSensor.
+ * This class is an IMU sensor class inherited from OnBoardSensor.
  * <p>
- * In particular, this sensor class handles face detected event.
+ * In particular, this sensor class handles the shaken event.
  * <p>
  * 
  * @author Shinda
  * @version 1.0 05/10/2015
  */
-public final class Camera extends OnBoardSensor implements ICameraCtxUpdated {
+public final class IMU extends OnBoardSensor implements IIMUCtxUpdated {
 
 	/* The name of the sensor thread */
-	final private String SENSOR_THREAD_NAME = "Cam";
+	final private String sensorThreadName = "IMU";
 
 	/* The path where the sensor module executable is stored */
-	final private String SENSOR_MODULE_PATH = "sensorbin/cam";
+	final private String sensorModulePath = "sensorbin/IMU";
 
 	/*
 	 * The interface to which this sensor module passes events for actual
 	 * handling
 	 */
-	private ICameraCtxUpdated ctxInterface = null;
+	private IIMUCtxUpdated ctxInterface = null;
 
 	/**
 	 * This is the constructor.
 	 * 
-	 * @param ICameraCtxUpdated
-	 *            The ICameraCtxUpdated interface that to which this sensor
-	 *            module passes events for actual handling.
+	 * @param IIMUCtxUpdated
+	 *            The IIMUCtxUpdated interface that to which this sensor module
+	 *            passes events for actual handling.
 	 */
-	public Camera(ICameraCtxUpdated _ctxInterface) {
+	public IMU(IIMUCtxUpdated _ctxInterface) {
 		this.ctxInterface = _ctxInterface;
 	}
 
@@ -50,8 +50,8 @@ public final class Camera extends OnBoardSensor implements ICameraCtxUpdated {
 	 */
 	@Override
 	protected void handleSensorMsg(String msg) {
-		if (msg.compareToIgnoreCase("face") == 0) {
-			this.OnBoardCameraFaceDetected();
+		if (msg.compareToIgnoreCase("shake") == 0) {
+			this.OnBoardIMUShakeDetected();
 		}
 	}
 
@@ -59,34 +59,35 @@ public final class Camera extends OnBoardSensor implements ICameraCtxUpdated {
 	 * Override abstract function from parent class to configure the path of the
 	 * sensor module executable.
 	 * 
-	 * @return The path where camera module executable is stored.
+	 * @return The path where IMU module executable is stored.
 	 */
 	@Override
 	final protected String getSensorModulePath() {
-		return this.SENSOR_MODULE_PATH;
+		return this.sensorModulePath;
 	}
 
 	/**
 	 * Override abstract function from parent class to configure the name of the
-	 * camera sensor thread.
+	 * IMU sensor thread.
 	 * 
-	 * @return The name of the camera sensor thread.
+	 * @return The name of the IMU sensor thread.
 	 */
 	@Override
 	final protected String getSensorThreadName() {
-		return this.SENSOR_THREAD_NAME;
+		return this.sensorThreadName;
 	}
 
 	/******************************************************************
-	 * ICameraCtxUpdated interface
+	 * IIMUCtxUpdated interface
 	 ******************************************************************/
 
 	/**
-	 * This function implements the faceDetected function in the
-	 * ICameraCtxUpdated interface by passing the event to the context engine.
+	 * This function implements the OnBoardIMUShakeDetected function in the
+	 * IIMUCtxUpdated interface by passing the event to the context engine.
 	 */
 	@Override
-	public void OnBoardCameraFaceDetected() {
-		ctxInterface.OnBoardCameraFaceDetected();
+	public void OnBoardIMUShakeDetected() {
+		ctxInterface.OnBoardIMUShakeDetected();
 	}
+
 }
