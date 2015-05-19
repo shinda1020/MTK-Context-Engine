@@ -14,10 +14,10 @@ import mtk.ctxengine.sensors.OnBoardSensor;
 public final class IMU extends OnBoardSensor implements IIMUCtxUpdated {
 
 	/* The name of the sensor thread */
-	final private String sensorThreadName = "IMU";
+	final private String SENSOR_THREAD_NAME = "IMU";
 
 	/* The path where the sensor module executable is stored */
-	final private String sensorModulePath = "sensorbin/IMU";
+	final private String SENSOR_MODULE_PATH = "sensorbin/IMU";
 
 	/*
 	 * The interface to which this sensor module passes events for actual
@@ -63,7 +63,7 @@ public final class IMU extends OnBoardSensor implements IIMUCtxUpdated {
 	 */
 	@Override
 	final protected String getSensorModulePath() {
-		return this.sensorModulePath;
+		return this.SENSOR_MODULE_PATH;
 	}
 
 	/**
@@ -74,7 +74,7 @@ public final class IMU extends OnBoardSensor implements IIMUCtxUpdated {
 	 */
 	@Override
 	final protected String getSensorThreadName() {
-		return this.sensorThreadName;
+		return this.SENSOR_THREAD_NAME;
 	}
 
 	/******************************************************************

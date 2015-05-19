@@ -35,7 +35,7 @@ public class ContextEngine implements ICtxUpdated {
 	private String hostName;
 
 	/* The path where methods.json file locates */
-	private String methodFilePath;
+	private String methodFile;
 
 	/******************************************************************
 	 * On-board sensors
@@ -63,12 +63,12 @@ public class ContextEngine implements ICtxUpdated {
 	public ContextEngine(String _hostName, String _methodFile,
 			ICtxUpdated _ctxInterface) {
 		this.hostName = _hostName;
-		this.methodFilePath = _methodFile;
+		this.methodFile = _methodFile;
 		this.ctxInterface = _ctxInterface;
 
 		// Set static variables
 		OffBoardSensorClient.setHostName(hostName);
-		OffBoardSensorClient.setMethodFile(methodFilePath);
+		OffBoardSensorClient.setMethodFile(methodFile);
 	}
 
 	public String getHostName() {
@@ -80,11 +80,11 @@ public class ContextEngine implements ICtxUpdated {
 	}
 
 	public String getMethodFilePath() {
-		return methodFilePath;
+		return methodFile;
 	}
 
 	public void setMethodFilePath(String methodFilePath) {
-		this.methodFilePath = methodFilePath;
+		this.methodFile = methodFilePath;
 	}
 
 	/******************************************************************
