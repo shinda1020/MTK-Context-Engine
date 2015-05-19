@@ -1,7 +1,7 @@
 package mtk.ctxengine;
 
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 import mtk.ctxengine.sensors.ICtxUpdated;
 import mtk.ctxengine.sensors.OffBoardSensorClient;
@@ -46,7 +46,7 @@ public class ContextEngine implements ICtxUpdated {
 	/******************************************************************
 	 * Off-board sensors
 	 ******************************************************************/
-	private static LinkedList<OffBoardSensorClient> sensorClients = new LinkedList<OffBoardSensorClient>();
+	private static ArrayList<OffBoardSensorClient> sensorClients = new ArrayList<OffBoardSensorClient>();
 
 	/******************************************************************
 	 * Interface that handles sensor events
@@ -155,7 +155,7 @@ public class ContextEngine implements ICtxUpdated {
 		try {
 			sensor = new OffBoardSensorClient(_sensorName, this);
 			sensor.startSensor();
-			sensorClients.addLast(sensor);
+			sensorClients.add(sensor);
 		}
 		// Wrong JSON format
 		catch (JSONException e) {
