@@ -34,7 +34,7 @@ public abstract class MemoryApp implements ICtxUpdated {
 	 * The super methods simply instantiates its own context engine.
 	 */
 	public void start() {
-		ctxEngine = new ContextEngine(getHostName(), getMethodFilePath(), this);
+		ctxEngine = new ContextEngine(getHostName(), getMethodFile(), this);
 	}
 
 	/******************************************************************
@@ -49,7 +49,7 @@ public abstract class MemoryApp implements ICtxUpdated {
 	/**
 	 * This abstract defines the path of the methods.json file.
 	 */
-	protected abstract String getMethodFilePath();
+	protected abstract String getMethodFile();
 
 	/******************************************************************
 	 * ICtxUpdated implementation

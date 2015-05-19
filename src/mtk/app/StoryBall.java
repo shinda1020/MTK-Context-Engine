@@ -22,7 +22,7 @@ public class StoryBall extends MemoryApp {
 	}
 
 	@Override
-	protected String getMethodFilePath() {
+	protected String getMethodFile() {
 		return methodFilePath;
 	}
 
