@@ -2,8 +2,8 @@ package mtk.app;
 
 public class StoryBall extends MemoryApp {
 
-	private String hostName = "localhost";
-	private String methodFilePath = "methods.json";
+	private final String HOST_NAME = "localhost";
+	private final String METHOD_FILE = "methods.json";
 
 	public StoryBall() {
 		super();
@@ -18,12 +18,12 @@ public class StoryBall extends MemoryApp {
 
 	@Override
 	protected String getHostName() {
-		return hostName;
+		return HOST_NAME;
 	}
 
 	@Override
 	protected String getMethodFile() {
-		return methodFilePath;
+		return METHOD_FILE;
 	}
 
 	@Override
