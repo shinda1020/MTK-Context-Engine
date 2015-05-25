@@ -34,7 +34,8 @@ public abstract class MemoryApp implements ICtxUpdated {
 	 * The super methods simply instantiates its own context engine.
 	 */
 	public void start() {
-		ctxEngine = new ContextEngine(getHostName(), getMethodFile(), this);
+		ctxEngine = ContextEngine.getInstance(getHostName(), getMethodFile(),
+				this);
 	}
 
 	/******************************************************************

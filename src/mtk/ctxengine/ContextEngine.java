@@ -31,6 +31,9 @@ import org.json.JSONException;
 
 public class ContextEngine implements ICtxUpdated {
 
+	/* Private instance to avoid being referenced from external code */
+	private static ContextEngine instance = null;
+
 	/* The host where Redis server is running */
 	private String hostName;
 
@@ -57,10 +60,18 @@ public class ContextEngine implements ICtxUpdated {
 	 * Constructor, Setters & Getters
 	 ******************************************************************/
 
+	public static ContextEngine getInstance(String _hostName,
+			String _methodFile, ICtxUpdated _ctxInterface) {
+		if (instance == null) {
+			instance = new ContextEngine(_hostName, _methodFile, _ctxInterface);
+		}
+		return instance;
+	}
+
 	/**
-	 * Naive constructor
+	 * Naive constructor, set to private to ensure singleton.
 	 */
-	public ContextEngine(String _hostName, String _methodFile,
+	private ContextEngine(String _hostName, String _methodFile,
 			ICtxUpdated _ctxInterface) {
 		this.hostName = _hostName;
 		this.methodFile = _methodFile;
