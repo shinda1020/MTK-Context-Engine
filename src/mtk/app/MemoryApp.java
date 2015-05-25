@@ -31,7 +31,7 @@ public abstract class MemoryApp implements ICtxUpdated {
 	 * The start method for applications. Must be override! And the first line
 	 * of the overridden method must start with the line "super.start()".
 	 * <p>
-	 * The super methods simply instantiates its own context engine.
+	 * The super method simply instantiates its own context engine.
 	 */
 	public void start() {
 		ctxEngine = ContextEngine.getInstance(getHostName(), getMethodFile(),
