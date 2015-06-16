@@ -1,2 +1,3 @@
 {"sensorName":"Activity", "sensorCh":"ACTIVITY_CH", "methods":[{"message":"ActivityNone", "method":"OffBoardActivityNoneDetected"}, {"message":"ActivityLow", "method":"OffBoardActivityLowDetected"}, {"message":"ActivityHigh", "method":"OffBoardActivityHighDetected"}]}
 {"sensorName":"Speech", "sensorCh":"SPEECH_CH", "methods":[{"message":"SpeechNone", "method":"OffBoardSpeechNoneDetected"}, {"message":"SpeechLow", "method":"OffBoardSpeechLowDetected"}, {"message":"SpeechHigh", "method":"OffBoardSpeechHighDetected"}]}
+
