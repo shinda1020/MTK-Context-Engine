@@ -1,0 +1,2 @@
+{"sensorType":"local", "sensorName":"IMU", "sensorModulePath":"/Users/shinda/Develop/MemoryToolkit/sensorbin/IMU", "sensorMessages":["shake"]}
+{"sensorType":"remote", "sensorName":"Activity", "sensorChannel":"ActivityCh", "sensorMessages":["ActivityNone", "ActivityLow", "ActivityHigh"]}

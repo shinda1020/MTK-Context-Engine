@@ -1,91 +1,110 @@
 package mtk.ctxengine.sensors;
 
+/**
+ * Memory Toolkit Local/On-board Sensor
+ * <p>
+ * This class is an abstract class of all local/on-board sensor services.
+ * </p>
+ * <p>
+ * Unlike remote/off-board sensor services, the local/on-board ones are started
+ * via running executable sensor modules, whereas the remote/off-board ones are
+ * virtual wrappers of Redis threads that read sensor events and messages coming
+ * from sensors in the wild.
+ * </p>
+ * 
+ * @author Xinda Zeng <xinda@umich.edu>
+ * @version 1.1 10/20/2015
+ */
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
-import redis.clients.jedis.JedisPubSub;
+public class LocalSensor extends Sensor {
 
-/**
- * This class is an abstract class of all off-board sensor services.
- * <p>
- * Off-board sensor services are activated through network, precisely Redis in
- * this case. Unlike on-board sensors, each sensor module can be started
- * seperately to run sensor service, pub/sub to application modules, etc.
- * <p>
- * This is the current version of the off-board service. The major difference is
- * that this implementation does not subscribe to Redis channels and wait for
- * activation. Currently, we just assume sensors always run at backend and are
- * never turned off. Also, there is no need for remote configuration in our
- * current assumption. This is to be updated.
- * 
- * @author Shinda
- * @version 1.0 05/12/2015
- */
+	/* The name of sensor service */
+	private String sensorName;
 
-public abstract class OffBoardSensor extends JedisPubSub {
+	/* The messages/sensor events of the particular sensor */
+	private String[] messages;
+
+	/* The path where the sensor module executable is stored */
+	private String sensorModulePath;
+
+	/* The flag that specifies the running state of the sensor module */
+	private boolean isRunning = false;
 
 	/* The private sensor thread instance */
 	private SensorThread sensorThread;
 
-	/* The Jedis pool instance */
-	private static JedisPool pool;
-
-	/* The Jedis instance */
-	private Jedis jedis;
-
-	/**
-	 * This constructor initiates the connection from the sensor module to the
-	 * Redis server.
-	 * 
-	 * @param hostName
-	 *            The host name of the Redis server that this sensor module
-	 *            connects to.
+	/*
+	 * The interface to which the local sensor client passes events for actual
+	 * handling
 	 */
-	public OffBoardSensor(String hostName) {
-		// Initiate the connection.
-		pool = new JedisPool(new JedisPoolConfig(), hostName);
-		jedis = pool.getResource();
-	}
+	private SensorMessageHandler sensorMessageHandler = null;
 
 	/******************************************************************
-	 * Abstract methods
+	 * Constructor, Setters & Getters
 	 ******************************************************************/
 
 	/**
-	 * This abstract function defines the behaviors after certain sensor
-	 * messages are received.
+	 * The constructor.
 	 * 
-	 * @param msg
-	 *            The sensor message read from stdout.
+	 * @param sensorName
+	 *            the name of the sensor service.
+	 * @param sensorModulePath
+	 *            the path where the sensor module executable is stored.
+	 * @param messages
+	 *            the messages/sensor events of the particular sensor.
 	 */
-	protected abstract void handleSensorMsg(String msg);
+	public LocalSensor(String sensorName, String sensorModulePath,
+			String[] messages, SensorMessageHandler sensorMessageHandler) {
+		this.sensorName = sensorName;
+		this.sensorModulePath = sensorModulePath;
+		this.messages = messages;
+		this.sensorMessageHandler = sensorMessageHandler;
+	}
+
+	@Override
+	public String getSensorName() {
+		return sensorName;
+	}
+
+	public String[] getMessages() {
+		return messages;
+	}
+
+	public void setMessages(String[] messages) {
+		this.messages = messages;
+	}
+
+	public SensorMessageHandler getSensorMessageHandler() {
+		return sensorMessageHandler;
+	}
+
+	public void setSensorMessageHandler(
+			SensorMessageHandler sensorMessageHandler) {
+		this.sensorMessageHandler = sensorMessageHandler;
+	}
 
 	/**
-	 * This abstract function defines where to run the sensor module.
+	 * Message Received From Standard Output
+	 * <p>
+	 * This method handles the output in the standard output.
+	 * </p>
 	 * 
-	 * @return The path where the sensor executable is stored.
+	 * @param message
+	 *            the message received from standard output.
 	 */
-	protected abstract String getSensorModulePath();
+	protected void msgReceivedFromStdOutput(String message) {
 
-	/**
-	 * This abstract function defines the channel that this sensor subscribes
-	 * to, e.g., ACTIVITY_CH.
-	 * 
-	 * @return the channel that this sensor subscribes.
-	 */
-	protected abstract String getSensorChannelOnRedis();
-
-	/**
-	 * This abstract function defines the name of the sensor thread.
-	 * 
-	 * @return The name of the sensor thread.
-	 */
-	protected abstract String getSensorThreadName();
+		for (int i = 0; i < messages.length; ++i) {
+			if (message.compareToIgnoreCase(messages[i]) == 0) {
+				sensorMessageHandler.onSensorMessageReceived(this, message);
+			}
+		}
+	}
 
 	/******************************************************************
 	 * Global implementation of sensor services (No need to change for
@@ -95,56 +114,27 @@ public abstract class OffBoardSensor extends JedisPubSub {
 	/**
 	 * This function starts the sensor module from predefined module path.
 	 */
-	public void startSensor() {
-		sensorThread = new SensorThread(this.getSensorThreadName(),
-				this.getSensorModulePath());
-		sensorThread.start();
+	@Override
+	public void start() {
+		if (!isRunning) {
+			sensorThread = new SensorThread(sensorName, sensorModulePath);
+			sensorThread.start();
+			isRunning = true;
+		}
 	}
 
 	/**
 	 * This function stops the sensor module service.
 	 */
-	public void stopSensor() {
+	@Override
+	public void stop() {
 		this.sensorThread.stop();
-	}
-
-	/**
-	 * This function publishes context through corresponding Redis channel.
-	 * 
-	 * @param ctx
-	 *            The context string
-	 */
-	protected final void pubContext(String ctx) {
-		jedis.publish(this.getSensorChannelOnRedis(), ctx);
+		isRunning = false;
 	}
 
 	/******************************************************************
-	 * Implementation of abstract methods
+	 * Inner class
 	 ******************************************************************/
-
-	@Override
-	public void onMessage(String arg0, String arg1) {
-	}
-
-	@Override
-	public void onPMessage(String arg0, String arg1, String arg2) {
-	}
-
-	@Override
-	public void onPSubscribe(String arg0, int arg1) {
-	}
-
-	@Override
-	public void onPUnsubscribe(String arg0, int arg1) {
-	}
-
-	@Override
-	public void onSubscribe(String arg0, int arg1) {
-	}
-
-	@Override
-	public void onUnsubscribe(String arg0, int arg1) {
-	}
 
 	/**
 	 * This inner class is designed to start sensor services as threads to stop
@@ -173,14 +163,14 @@ public abstract class OffBoardSensor extends JedisPubSub {
 		/**
 		 * The constructor
 		 * 
-		 * @param _threadName
+		 * @param name
 		 *            The thread name
-		 * @param _path
+		 * @param path
 		 *            The path of sensor module executable
 		 */
-		SensorThread(String _threadName, String _path) {
-			threadName = _threadName;
-			runnablePath = _path;
+		SensorThread(String name, String path) {
+			threadName = name;
+			runnablePath = path;
 		}
 
 		/**
@@ -223,7 +213,7 @@ public abstract class OffBoardSensor extends JedisPubSub {
 			String line;
 			try {
 				while ((line = br.readLine()) != null && !isInterrupted) {
-					handleSensorMsg(line);
+					msgReceivedFromStdOutput(line);
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -257,4 +247,5 @@ public abstract class OffBoardSensor extends JedisPubSub {
 		}
 
 	} /* SensorThread */
-}
+
+} /* OnBoardSensor */

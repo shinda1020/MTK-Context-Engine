@@ -1,109 +1,71 @@
 package mtk.app;
 
 import mtk.ctxengine.ContextEngine;
-import mtk.ctxengine.sensors.ICtxUpdated;
+import mtk.ctxengine.sensors.SensorMessageHandler;
 
 /**
- * This class is the application prototype.
+ * Memory Toolkit Memory Application
  * <p>
  * To build applications on top of this class, firstly create a class that
  * extends the MemoryApp class. Then, for the interested context types, override
  * the event methods defined in ICtxUpdated interface.
  * 
- * @author Shinda
- * @version 1.0 05/15/2015
+ * @author Xinda Zeng <xinda@umich.edu>
+ * @version 1.1 10/20/2015
  */
 
-public abstract class MemoryApp implements ICtxUpdated {
-
-	/* The context engine for this app */
-	protected ContextEngine ctxEngine;
+public abstract class MemoryApp {
 
 	/**
 	 * Constructor
 	 * 
 	 */
 	public MemoryApp() {
-
+		onCreate();
+		onStart();
 	}
 
 	/**
-	 * The start method for applications. Must be override! And the first line
-	 * of the overridden method must start with the line "super.start()".
+	 * Stop Application
 	 * <p>
-	 * The super method simply instantiates its own context engine.
+	 * This method terminates this application. Also, this method is declared as
+	 * final such that all termination handling should be placed in
+	 * {@link MemoryApp#onStop()}.
 	 */
-	public void start() {
-		ctxEngine = ContextEngine.getInstance(getHostName(), getMethodFile(),
-				this);
+	public final void stopApplication() {
+		onStop();
 	}
 
 	/******************************************************************
-	 * Abstract methods
+	 * Application life-cycle abstract methods
 	 ******************************************************************/
 
 	/**
-	 * This abstract defines the host name of the Redis server.
-	 */
-	protected abstract String getHostName();
-
-	/**
-	 * This abstract defines the path of the methods.json file.
-	 */
-	protected abstract String getMethodFile();
-
-	/******************************************************************
-	 * ICtxUpdated implementation
-	 ******************************************************************/
-
-	/**
-	 * Below are all the methods declared in the ICtxUpdated interface. Right
-	 * now this is the naive implementation of these methods, which does
-	 * nothing.
+	 * On Create
 	 * <p>
-	 * To build an application, create a new class that extends to this class,
-	 * i.e., MemoryApp. Then simply override the context events that are of
-	 * interest, such as IMU events for StoryBall.
+	 * The abstract method that defines the behavior of application being
+	 * created. Initialization of application variables should be placed here.
+	 * </p>
 	 */
+	protected abstract void onCreate();
 
-	@Override
-	public void OnBoardIMUShakeDetected() {
+	/**
+	 * On Start
+	 * <p>
+	 * The abstract method that defines the behavior of application being
+	 * started. Main logic of the application should be placed here.
+	 * </p>
+	 */
+	protected abstract void onStart();
 
-	}
-
-	@Override
-	public void OnBoardCameraFaceDetected() {
-
-	}
-
-	@Override
-	public void OffBoardActivityNoneDetected() {
-
-	}
-
-	@Override
-	public void OffBoardActivityLowDetected() {
-
-	}
-
-	@Override
-	public void OffBoardActivityHighDetected() {
-
-	}
-
-	@Override
-	public void OffBoardSpeechNoneDetected() {
-
-	}
-
-	@Override
-	public void OffBoardSpeechLowDetected() {
-
-	}
-
-	@Override
-	public void OffBoardSpeechHighDetected() {
-
-	}
+	/**
+	 * On Stop
+	 * <p>
+	 * The abstract method that defines the {@link MemoryApp#stopApplication()}
+	 * being called. All termination of sub-services, such as network, sensor,
+	 * etc., should be placed here.
+	 * </p>
+	 */
+	protected abstract void onStop();
 
 }

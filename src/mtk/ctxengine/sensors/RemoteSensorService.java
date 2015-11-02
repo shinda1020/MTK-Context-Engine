@@ -5,25 +5,57 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.JedisPubSub;
+
 /**
- * This class is an abstract class of all on-board sensor services.
+ * Memory Toolkit Remote Sensor Service
  * <p>
- * Unlike off-board sensor services, the on-board ones are called and started
- * from the context engine directly, whereas the off-board ones are activated
- * through network.
+ * This class is an abstract class of all remote/off-board sensor services.
+ * </p>
  * <p>
+ * Off-board sensor services are activated through network, precisely Redis in
+ * this case. Unlike on-board sensors, each sensor module can be started
+ * separately to run sensor service, pub/sub to application modules, etc.
+ * </p>
+ * <p>
+ * This is the current version of the off-board service. The major difference is
+ * that this implementation does not subscribe to Redis channels and wait for
+ * activation. Currently, we just assume sensors always run at backend and are
+ * never turned off. Also, there is no need for remote configuration in our
+ * current assumption. This is to be updated.
+ * </p>
  * 
- * @author Shinda
- * @version 1.0 05/10/2015
+ * @author Xinda Zeng <xinda@umich.edu>
+ * @version 1.1 10/20/2015
  */
 
-public abstract class OnBoardSensor {
+public abstract class RemoteSensorService extends JedisPubSub {
 
 	/* The private sensor thread instance */
 	private SensorThread sensorThread;
 
-	/* The flag that specifies the running state of the sensor module */
-	private boolean isRunning = false;
+	/* The Jedis pool instance */
+	private static JedisPool pool;
+
+	/* The Jedis instance */
+	private Jedis jedis;
+
+	/**
+	 * This constructor initiates the connection from the sensor module to the
+	 * Redis server.
+	 * 
+	 * @param hostName
+	 *            The host name of the Redis server that this sensor module
+	 *            connects to.
+	 */
+	public RemoteSensorService(String hostName) {
+		// Initiate the connection.
+		pool = new JedisPool(new JedisPoolConfig(), hostName);
+		jedis = pool.getResource();
+	}
 
 	/******************************************************************
 	 * Abstract methods
@@ -46,6 +78,14 @@ public abstract class OnBoardSensor {
 	protected abstract String getSensorModulePath();
 
 	/**
+	 * This abstract function defines the channel that this sensor subscribes
+	 * to, e.g., ACTIVITY_CH.
+	 * 
+	 * @return the channel that this sensor subscribes.
+	 */
+	protected abstract String getSensorChannelOnRedis();
+
+	/**
 	 * This abstract function defines the name of the sensor thread.
 	 * 
 	 * @return The name of the sensor thread.
@@ -61,12 +101,9 @@ public abstract class OnBoardSensor {
 	 * This function starts the sensor module from predefined module path.
 	 */
 	public void startSensor() {
-		if (!isRunning) {
-			sensorThread = new SensorThread(this.getSensorThreadName(),
-					this.getSensorModulePath());
-			sensorThread.start();
-			isRunning = true;
-		}
+		sensorThread = new SensorThread(this.getSensorThreadName(),
+				this.getSensorModulePath());
+		sensorThread.start();
 	}
 
 	/**
@@ -74,12 +111,45 @@ public abstract class OnBoardSensor {
 	 */
 	public void stopSensor() {
 		this.sensorThread.stop();
-		isRunning = false;
+	}
+
+	/**
+	 * This function publishes context through corresponding Redis channel.
+	 * 
+	 * @param ctx
+	 *            The context string
+	 */
+	protected final void pubContext(String ctx) {
+		jedis.publish(this.getSensorChannelOnRedis(), ctx);
 	}
 
 	/******************************************************************
-	 * Inner class
+	 * Implementation of abstract methods
 	 ******************************************************************/
+
+	@Override
+	public void onMessage(String arg0, String arg1) {
+	}
+
+	@Override
+	public void onPMessage(String arg0, String arg1, String arg2) {
+	}
+
+	@Override
+	public void onPSubscribe(String arg0, int arg1) {
+	}
+
+	@Override
+	public void onPUnsubscribe(String arg0, int arg1) {
+	}
+
+	@Override
+	public void onSubscribe(String arg0, int arg1) {
+	}
+
+	@Override
+	public void onUnsubscribe(String arg0, int arg1) {
+	}
 
 	/**
 	 * This inner class is designed to start sensor services as threads to stop
@@ -108,14 +178,14 @@ public abstract class OnBoardSensor {
 		/**
 		 * The constructor
 		 * 
-		 * @param name
+		 * @param _threadName
 		 *            The thread name
-		 * @param path
+		 * @param _path
 		 *            The path of sensor module executable
 		 */
-		SensorThread(String name, String path) {
-			threadName = name;
-			runnablePath = path;
+		SensorThread(String _threadName, String _path) {
+			threadName = _threadName;
+			runnablePath = _path;
 		}
 
 		/**
@@ -192,5 +262,4 @@ public abstract class OnBoardSensor {
 		}
 
 	} /* SensorThread */
-
-} /* OnBoardSensor */
+}

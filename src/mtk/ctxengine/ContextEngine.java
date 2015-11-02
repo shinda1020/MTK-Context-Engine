@@ -3,83 +3,58 @@ package mtk.ctxengine;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import mtk.ctxengine.sensors.ICtxUpdated;
-import mtk.ctxengine.sensors.OffBoardSensorClient;
-import mtk.ctxengine.sensors.onboard.Camera;
-import mtk.ctxengine.sensors.onboard.IMU;
+import mtk.ctxengine.sensors.SensorMessageHandler;
+import mtk.ctxengine.sensors.LocalSensor;
+import mtk.ctxengine.sensors.RemoteSensor;
+import mtk.ctxengine.sensors.Sensor;
+import mtk.ctxengine.sensors.SensorFactory;
+import mtk.ctxengine.sensors.SensorFactory.SensorFactoryException;
 
 import org.json.JSONException;
 
 /**
- * This class is the context engine in an application.
+ * Memory Toolkit Context Engine
  * <p>
- * The context engine is responsible for the following things:
+ * This context engine starts/stops both the local and remote sensor modules, as
+ * well as handles their corresponding sensor events/messages. For local
+ * sensors, the context engine instantiates corresponding sensor wrappers and
+ * monitors their states. For each remote sensor, the context engine creates a
+ * Redis client thread and receives events from Redis server via Pub/Sub.
  * <p>
- * Sensor monitor: This context engine starts/stops and monitors both the on and
- * off-board sensor modules. For on-board sensors, the context engine
- * instantiates corresponding sensor wrappers and monitors their states. For
- * each off-board sensor, the context engine creates a Redis client thread and
- * receives events from Redis server via Pub/Sub.
- * <p>
- * Event passing: The context engine passes the sensor events to a particular
- * app via Java interface. The concrete event-handling is implemented in
- * specific apps.
  * 
- * @author Shinda
- * @version 1.0 05/15/2015
+ * @author Xinda Zeng <xinda@umich.edu>
+ * @version 1.1 10/20/2015
  */
 
-public class ContextEngine implements ICtxUpdated {
-
-	/* Private instance to avoid being referenced from external code */
-	private static ContextEngine instance = null;
+public abstract class ContextEngine {
 
 	/* The host where Redis server is running */
-	private String hostName;
+	protected String hostName;
 
-	/* The path where methods.json file locates */
-	private String methodFile;
+	/* The path where the sensor info file locates */
+	protected String sensorInfoPath;
 
-	/******************************************************************
-	 * On-board sensors
-	 ******************************************************************/
-	private static IMU imuSensor;
-	private static Camera camSensor;
+	/* The sensor factory that is used for creating new sensor instances */
+	protected SensorFactory sensorFactory;
 
-	/******************************************************************
-	 * Off-board sensors
-	 ******************************************************************/
-	private static ArrayList<OffBoardSensorClient> sensorClients = new ArrayList<OffBoardSensorClient>();
-
-	/******************************************************************
-	 * Interface that handles sensor events
-	 ******************************************************************/
-	private ICtxUpdated ctxInterface = null;
+	/* The sensor list that stores all the active sensors */
+	protected ArrayList<Sensor> activeSensorList;
 
 	/******************************************************************
 	 * Constructor, Setters & Getters
 	 ******************************************************************/
 
-	public static ContextEngine getInstance(String _hostName,
-			String _methodFile, ICtxUpdated _ctxInterface) {
-		if (instance == null) {
-			instance = new ContextEngine(_hostName, _methodFile, _ctxInterface);
+	public ContextEngine(String hostName, String sensorInfoPath) {
+		this.hostName = hostName;
+		this.sensorInfoPath = sensorInfoPath;
+
+		activeSensorList = new ArrayList<Sensor>();
+
+		try {
+			sensorFactory = new SensorFactory(hostName, sensorInfoPath);
+		} catch (SensorFactoryException e) {
+			e.printStackTrace();
 		}
-		return instance;
-	}
-
-	/**
-	 * Naive constructor, set to private to ensure singleton.
-	 */
-	private ContextEngine(String _hostName, String _methodFile,
-			ICtxUpdated _ctxInterface) {
-		this.hostName = _hostName;
-		this.methodFile = _methodFile;
-		this.ctxInterface = _ctxInterface;
-
-		// Set static variables
-		OffBoardSensorClient.setHostName(hostName);
-		OffBoardSensorClient.setMethodFile(methodFile);
 	}
 
 	public String getHostName() {
@@ -90,220 +65,129 @@ public class ContextEngine implements ICtxUpdated {
 		this.hostName = hostName;
 	}
 
-	public String getMethodFilePath() {
-		return methodFile;
+	public String getSensorInfoPath() {
+		return sensorInfoPath;
 	}
 
-	public void setMethodFilePath(String methodFilePath) {
-		this.methodFile = methodFilePath;
-	}
-
-	/******************************************************************
-	 * On-board sensor control
-	 ******************************************************************/
-
-	/**
-	 * This function instantiates the static imuSensor variable and starts the
-	 * sensing service.
-	 */
-	public void startIMU() {
-		if (imuSensor == null) {
-			imuSensor = new IMU(this);
-			imuSensor.startSensor();
-		}
-	}
-
-	/**
-	 * This function terminates the IMU sensing service.
-	 */
-	public void stopIMU() {
-		if (imuSensor != null) {
-			imuSensor.stopSensor();
-		}
-	}
-
-	/**
-	 * This function instantiates the static camSensor variable and starts the
-	 * sensing service.
-	 */
-	public void startCamera() {
-		if (camSensor == null) {
-			camSensor = new Camera(this);
-			camSensor.startSensor();
-		}
-	}
-
-	/**
-	 * This function terminates the camera sensing service.
-	 */
-	public void stopCamera() {
-		if (camSensor != null) {
-			camSensor.stopSensor();
-		}
+	public void setSensorInfoPath(String sensorInfoPath) {
+		this.sensorInfoPath = sensorInfoPath;
 	}
 
 	/******************************************************************
-	 * Off-board sensor control
+	 * Sensor control
 	 ******************************************************************/
 
 	/**
-	 * This function instantiates an off-board sensor client giving the sensor
-	 * name.
+	 * Start Sensor
 	 * <p>
-	 * The method firstly query the sensor list to see if the particular sensor
-	 * has been started. If not, the method instantiates a new
-	 * OffBoardSensorClient and starts the service.
+	 * This method starts the sensor service with the given name via first
+	 * creating a sensor instance from the sensor factory, then starting the
+	 * sensor and adding it to the active sensor list.
+	 * </p>
 	 * 
+	 * @param sensorName
+	 *            the name of the sensor module that is to be started. This name
+	 *            shall be defined in the sensor info file.
+	 * @param sensorMessageHandler
+	 *            the sensor message handler.
+	 * @throws SensorFactoryException
+	 * @throws IOException
+	 * @throws JSONException
+	 * @throws ContextEngineException
 	 */
-	public void startOffBoardSensor(String _sensorName) {
-		// First check if the sensor has been started
-		if (this.getOffBoardSensor(_sensorName) != null) {
-			return;
+	public void startSensor(String sensorName,
+			SensorMessageHandler sensorMessageHandler) throws JSONException,
+			IOException, SensorFactoryException, ContextEngineException {
+		if (getSensorWithName(sensorName) != null) {
+			throw new ContextEngineException(
+					ContextEngineException.EXCEPTION_CONTEXT_ENGINE_SENSOR_ALREADY_STARTED);
 		}
 
-		// Instantiate a new OffBoardSensorClient
-		OffBoardSensorClient sensor;
-		try {
-			sensor = new OffBoardSensorClient(_sensorName, this);
-			sensor.startSensor();
-			sensorClients.add(sensor);
-		}
-		// Wrong JSON format
-		catch (JSONException e) {
-			e.printStackTrace();
-		}
-		// methods.json file not found, or cannot be read
-		catch (IOException e) {
-			e.printStackTrace();
-		}
+		Sensor sensor = null;
 
+		sensor = sensorFactory.createSensor(sensorName, sensorMessageHandler);
+
+		if (sensor != null) {
+			sensor.start();
+			activeSensorList.add(sensor);
+		}
 	}
 
 	/**
-	 * This function stops receiving messages from off-board sensor giving the
-	 * sensor name.
+	 * Stop Sensor
+	 * <p>
+	 * This method firstly retrieves the sensor with the given name. Then it
+	 * stops the sensor and removes it from the active sensor list.
+	 * </p>
 	 * 
+	 * @param sensorName
+	 * @throws ContextEngineException
 	 */
-	public void stopOffBoardSensor(String _sensorName) {
-		OffBoardSensorClient sensor = this.getOffBoardSensor(_sensorName);
-
-		// First check if the sensor exists
+	public void stopSensor(String sensorName) throws ContextEngineException {
+		Sensor sensor = getSensorWithName(sensorName);
 		if (sensor == null) {
-			return;
+			throw new ContextEngineException(
+					ContextEngineException.EXCEPTION_CONTEXT_ENGINE_SENSOR_HAS_NOT_BEEN_STARTED);
 		}
 
-		// Stop the sensor
-		sensor.stopSensor();
-
-		// Remove the sensor from the list
-		sensorClients.remove(sensor);
+		sensor.stop();
 	}
 
 	/**
-	 * This function queries the sensor client list and finds the sensor client
-	 * giving the sensor name.
+	 * Get Sensor With Name
+	 * <p>
+	 * This method attempts to get the sensor with the given name from the
+	 * sensor list. If no sensor with the given name is found in the list,
+	 * return a null object
+	 * </p>
 	 * 
-	 * @param _sensorName
-	 *            the name of the sensor
-	 * @return The off-board sensor client regarding the given sensor name, if
-	 *         any.
+	 * @param sensorName
+	 * @return the sensor instance if found with the same name, or null if not
+	 *         found.
 	 */
-	public OffBoardSensorClient getOffBoardSensor(String _sensorName) {
-		for (int i = 0; i < sensorClients.size(); ++i) {
-			OffBoardSensorClient temp = sensorClients.get(i);
-			if (temp.getSensorName() == _sensorName) {
+	public Sensor getSensorWithName(String sensorName) {
+		for (int i = 0; i < activeSensorList.size(); ++i) {
+			Sensor temp = activeSensorList.get(i);
+			if (temp.getSensorName() == sensorName) {
 				return temp;
 			}
 		}
 		return null;
 	}
 
-	/******************************************************************
-	 * IIMUCtxUpdated interface handling
-	 ******************************************************************/
-
 	/**
-	 * This function passes the shaken event when a shake is detected from IMU
-	 * module.
+	 * Memory Toolkit Context Engine Exception
+	 * <p>
+	 * This class represents a recoverable error within the work flow of the
+	 * {@link Sensor}
+	 * </p>
+	 * 
+	 * @author Xinda Zeng <xinda@umich.edu>
+	 * @version 1.1 10/20/2015
 	 */
-	@Override
-	public void OnBoardIMUShakeDetected() {
-		ctxInterface.OnBoardIMUShakeDetected();
+	public class ContextEngineException extends Exception {
+
+		private static final long serialVersionUID = 9096173435450040774L;
+
+		/**
+		 * @see {@link ContextEngine#startSensor(String)}
+		 */
+		public static final String EXCEPTION_CONTEXT_ENGINE_SENSOR_ALREADY_STARTED = "This sensor has already been started.";
+
+		/**
+		 * @see {@link ContextEngine#stopSensor(String)}
+		 */
+		public static final String EXCEPTION_CONTEXT_ENGINE_SENSOR_HAS_NOT_BEEN_STARTED = "This sensor has not been started yet and hence could not be stopped.";
+
+		/**
+		 * Default Constructor
+		 * 
+		 * @param message
+		 *            object of type {@link String} that contains the error
+		 *            details
+		 */
+		public ContextEngineException(String message) {
+			super(message);
+		}
 	}
-
-	/******************************************************************
-	 * ICameraCtxUpdated interface handling
-	 ******************************************************************/
-
-	/**
-	 * This function passes the face detected event when a face is detected from
-	 * camera module.
-	 */
-	@Override
-	public void OnBoardCameraFaceDetected() {
-		ctxInterface.OnBoardCameraFaceDetected();
-	}
-
-	/******************************************************************
-	 * IActivityCtxUpdated interface handling
-	 ******************************************************************/
-
-	/**
-	 * This function passes the none activity event when it is detected from
-	 * depth sensor.
-	 */
-	@Override
-	public void OffBoardActivityNoneDetected() {
-		ctxInterface.OffBoardActivityNoneDetected();
-	}
-
-	/**
-	 * This function passes the low activity event when it is detected from
-	 * depth sensor.
-	 */
-	@Override
-	public void OffBoardActivityLowDetected() {
-		ctxInterface.OffBoardActivityLowDetected();
-	}
-
-	/**
-	 * This function passes the high speech activity event when it is detected
-	 * from depth sensor.
-	 */
-	@Override
-	public void OffBoardActivityHighDetected() {
-		ctxInterface.OffBoardActivityHighDetected();
-	}
-
-	/******************************************************************
-	 * ISpeechCtxUpdated interface handling
-	 ******************************************************************/
-
-	/**
-	 * This function passes the none speech activity event when it is detected
-	 * from microphone.
-	 */
-	@Override
-	public void OffBoardSpeechNoneDetected() {
-		ctxInterface.OffBoardSpeechNoneDetected();
-	}
-
-	/**
-	 * This function passes the low speech activity event when it is detected
-	 * from microphone.
-	 */
-	@Override
-	public void OffBoardSpeechLowDetected() {
-		ctxInterface.OffBoardSpeechLowDetected();
-	}
-
-	/**
-	 * This function passes the high speech activity event when it is detected
-	 * from microphone.
-	 */
-	@Override
-	public void OffBoardSpeechHighDetected() {
-		ctxInterface.OffBoardSpeechHighDetected();
-	}
-
 }
