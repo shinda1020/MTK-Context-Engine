@@ -180,14 +180,15 @@ public class RemoteSensor extends Sensor {
 	 * This method handles the messages received from subscribed Redis channel.
 	 * </p>
 	 * 
-	 * @param msg
+	 * @param message
 	 *            the message received from corresponding Redis channel.
 	 */
-	protected void msgReceivedFromRedis(String msg) {
+	protected void msgReceivedFromRedis(String message) {
 
 		for (int i = 0; i < messages.length; ++i) {
-			if (msg.compareToIgnoreCase(messages[i]) == 0) {
-				System.out.println(msg);
+			if (message.compareToIgnoreCase(messages[i]) == 0) {
+				sensorMessageHandler.onSensorMessageReceived(this, message);
+				return;
 			}
 		}
 	}

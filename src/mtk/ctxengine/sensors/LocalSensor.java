@@ -102,6 +102,7 @@ public class LocalSensor extends Sensor {
 		for (int i = 0; i < messages.length; ++i) {
 			if (message.compareToIgnoreCase(messages[i]) == 0) {
 				sensorMessageHandler.onSensorMessageReceived(this, message);
+				return;
 			}
 		}
 	}
